@@ -1,1 +1,0 @@
-The location of the TPS65987DDJ configuration project is : DAMC-FMC2ZUP\trunk\DOC\TPS65987DDJ in the svn repository of the HW project
