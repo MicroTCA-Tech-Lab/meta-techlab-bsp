@@ -15,8 +15,6 @@ logging.addLevelName(LEVEL_TRACE, 'TRACE')
 
 class TPS65987:
 
-    I2C_ADDR = 0x38
-
     # from Table 1-1 in SLVUBH2B
     REG_ADDR_VID = (0, 4)
     REG_ADDR_DID = (1, 4)
@@ -33,9 +31,11 @@ class TPS65987:
     EXPECT_PROTO_VER = 1
 
 
-    def __init__(self, i2c_bus):
+    def __init__(self, i2c_bus, i2c_addr=0x23):
         self.logger = logging.getLogger(__name__)
         self.i2c_bus = i2c_bus
+        # address moves from 0x23 (non configured) to 0x38 (after config)
+        self.I2C_ADDR=i2c_addr
 
     def _rd_block(self, reg):
         """ Reg is defined as (register address, nr of bytes to read) """
@@ -174,6 +174,7 @@ def main():
     parser.add_argument('--program', type=str, nargs=1,
                         help='program bin file to Flash')
     parser.add_argument('--diag', action='store_true', help='print diag info')
+    parser.add_argument('--addr', type=str, help='address of the I2C device')
     args = parser.parse_args()
 
     if args.trace:
@@ -192,7 +193,13 @@ def main():
     DAMC_FMC2ZUP_TPS_I2C_BUS = 1
     i2c_bus = smbus.SMBus(DAMC_FMC2ZUP_TPS_I2C_BUS)
 
-    tps = TPS65987(i2c_bus)
+    if args.addr is not None:
+        addr = int(args.addr, 0)
+        print("addr = 0x{0:x}".format(addr))
+        tps = TPS65987(i2c_bus, addr)
+    else:
+        tps = TPS65987(i2c_bus)
+    
     tps.get_info()
 
     if args.program:
