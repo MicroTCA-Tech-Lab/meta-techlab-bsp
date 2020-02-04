@@ -1,0 +1,33 @@
+From a5dd601dd04a843b53a5061fc12e89383f37f1cc Mon Sep 17 00:00:00 2001
+From: Sven Stubbe <sven.stubbe@desy.de>
+Date: Mon, 7 Jan 2019 10:49:12 +0100
+Subject: [PATCH] net: macb: enable support for fibre PHYs
+
+Some PHYs provide the possibility to communicate over the fiber.
+The Cadence GEM driver incorrectly disables this feature. This
+patch lets the fibre capabilites intact.
+
+This patch is needed to run Marvell 88E1512 together with
+Cadence GEM.
+---
+ drivers/net/ethernet/cadence/macb_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index 2624fc2..981a6f6 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -585,8 +585,9 @@ static int macb_mii_probe(struct net_device *dev)
+ 	}
+ 
+ 	/* mask with MAC supported features */
++	netdev_info(dev, "Cadence GEM/MAC: TechLab: patch for FIBRE (88E1512)\n");
+ 	if (macb_is_gem(bp) && bp->caps & MACB_CAPS_GIGABIT_MODE_AVAILABLE)
+-		phydev->supported &= PHY_GBIT_FEATURES;
++		phydev->supported &= PHY_GBIT_FEATURES | SUPPORTED_FIBRE;
+ 	else
+ 		phydev->supported &= PHY_BASIC_FEATURES;
+ 
+-- 
+2.7.4
+
