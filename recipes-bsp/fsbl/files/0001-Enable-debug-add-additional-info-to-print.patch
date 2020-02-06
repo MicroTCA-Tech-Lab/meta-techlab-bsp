@@ -1,0 +1,48 @@
+From f7739b2e1c35aa822f8e7bc53ad3ce89bb69f7fe Mon Sep 17 00:00:00 2001
+From: Jan Marjanovic <jan.marjanovic@desy.de>
+Date: Tue, 4 Feb 2020 17:20:50 +0100
+Subject: [PATCH] Enable debug, add additional info to print
+
+---
+ lib/sw_apps/zynqmp_fsbl/src/xfsbl_hooks.c | 4 ++++
+ lib/sw_apps/zynqmp_fsbl/src/xfsbl_main.c  | 2 ++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/lib/sw_apps/zynqmp_fsbl/src/xfsbl_hooks.c b/lib/sw_apps/zynqmp_fsbl/src/xfsbl_hooks.c
+index 503a58559..54afb8d17 100644
+--- a/lib/sw_apps/zynqmp_fsbl/src/xfsbl_hooks.c
++++ b/lib/sw_apps/zynqmp_fsbl/src/xfsbl_hooks.c
+@@ -138,6 +138,7 @@ u32 XFsbl_HookPsuInit(void)
+ #endif
+ 
+ 	/* Add the code here */
++	XFsbl_Printf(DEBUG_GENERAL, "XFsbl_HookPsuInit() - start\n\r");
+ 
+ #ifdef XFSBL_ENABLE_DDR_SR
+ 	/* Check if DDR is in self refresh mode */
+@@ -152,6 +153,9 @@ u32 XFsbl_HookPsuInit(void)
+ 	Status = (u32)psu_init();
+ #endif
+ 
++	XFsbl_Printf(DEBUG_GENERAL, "XFsbl_HookPsuInit() - init done\n\r");
++
++
+ 	if (XFSBL_SUCCESS != Status) {
+ 			XFsbl_Printf(DEBUG_GENERAL,"XFSBL_PSU_INIT_FAILED\n\r");
+ 			/**
+diff --git a/lib/sw_apps/zynqmp_fsbl/src/xfsbl_main.c b/lib/sw_apps/zynqmp_fsbl/src/xfsbl_main.c
+index 4dc1eaab2..aa88ee877 100644
+--- a/lib/sw_apps/zynqmp_fsbl/src/xfsbl_main.c
++++ b/lib/sw_apps/zynqmp_fsbl/src/xfsbl_main.c
+@@ -94,6 +94,8 @@ int main(void )
+ 	}
+ #endif
+ 
++	XFsbl_Printf(DEBUG_PRINT_ALWAYS, "DAMC-FMC2ZUP BSP by MicroTCA Tech Lab\r\n");
++
+ #if defined(EL3) && (EL3 != 1)
+ #error "FSBL should be generated using only EL3 BSP"
+ #endif
+-- 
+2.17.1
+
