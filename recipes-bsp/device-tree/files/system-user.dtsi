@@ -1,4 +1,6 @@
 
+#include "dt-bindings/gpio/gpio.h"
+
 &gem3 {
     phy-handle = <&phy0>;
 
@@ -8,7 +10,7 @@
         reg = <0>;
         device_type = "ethernet-phy";
         marvell,reg-init =
-		    <254 15 0x3fff 0>;
+            <254 15 0x3fff 0>;
     };
 };
 
@@ -20,4 +22,30 @@
 &sdhci0 {
     // WP pin is not available on microSD, not connected on the board
     disable-wp;
+};
+
+&gpio {
+    i2c0oe {
+        gpio-hog;
+        output-high;
+        gpios = <20 GPIO_ACTIVE_HIGH>;
+    };
+};
+
+&i2c0 {
+    eeprom_mac: eeprom@50 {
+        compatible = "atmel,24c64";
+        reg = <0x50>;
+        pagesize = <16>;
+    };
+
+    si570_mgt_lll: clock-generator@5d {
+        #clock-cells = <0>;
+        compatible = "silabs,si570";
+        temperature-stability = <50>;
+        reg = <0x55>;
+        factory-fout = <125000000>;
+        clock-frequency = <156250000>;
+        clock-output-names = "si570_mgt_lll";
+    };
 };
