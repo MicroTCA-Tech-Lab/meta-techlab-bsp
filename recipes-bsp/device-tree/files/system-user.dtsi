@@ -32,6 +32,15 @@
     };
 };
 
+/ {
+    // Y3 and Y4 on the board
+    ref50M: ref50M {
+        compatible = "fixed-clock";
+        #clock-cells = <0>;
+        clock-frequency = <50000000>;
+    };
+};
+
 &i2c0 {
     eeprom_mac: eeprom@50 {
         compatible = "atmel,24c64";
@@ -47,5 +56,37 @@
         factory-fout = <125000000>;
         clock-frequency = <156250000>;
         clock-output-names = "si570_mgt_lll";
+    };
+
+    si5341_pl: clock-generator@77 {
+        reg = <0x77>;
+        compatible = "silabs,si5341";
+        #clock-cells = <2>;
+        #address-cells = <1>;
+        #size-cells = <0>;
+        clocks = <&ref50M>;
+        clock-names = "xtal";
+
+        silabs,pll-m-num = <13600>;
+        silabs,pll-m-den = <50>;
+
+        out@6 {
+            reg = <6>;
+            silabs,format = <2>;
+            silabs,amplitude = <3>;
+            silabs,synth-master;
+            always-on;
+        };
+    };
+};
+
+/ {
+    ddr_clk: ddr_clk {
+        clock-names = "clk_ddr";
+        clocks = <&si5341_pl 0 6>;
+
+        assigned-clocks = <&si5341_pl 0 6>, <&si5341_pl 1 3>;
+        assigned-clock-parents = <&si5341_pl 1 3>;
+        assigned-clock-rates = <400000000>, <400000000>;
     };
 };
