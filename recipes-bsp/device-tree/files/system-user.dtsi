@@ -1,0 +1,23 @@
+
+&gem3 {
+    phy-handle = <&phy0>;
+
+    phy0: phy@0 {
+        // Marvel 88E1512
+        //   compatible string is not needed
+        reg = <0>;
+        device_type = "ethernet-phy";
+        marvell,reg-init =
+		    <254 15 0x3fff 0>;
+    };
+};
+
+&axi_gpio_1 {
+    // no clock at the start-up
+    status = "disabled";
+};
+
+&sdhci0 {
+    // WP pin is not available on microSD, not connected on the board
+    disable-wp;
+};
