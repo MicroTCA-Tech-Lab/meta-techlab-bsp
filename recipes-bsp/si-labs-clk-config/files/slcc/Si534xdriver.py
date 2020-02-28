@@ -12,8 +12,8 @@ from slcc.extra_logging import LEVEL_TRACE
 LEVEL_TRACE = logging.DEBUG-5
 logging.addLevelName(LEVEL_TRACE, 'TRACE')
 
-class Si5341driver:
-    """ Si5341 clock generator configuration over I2C
+class Si534xdriver:
+    """ Si5340/1 clock generator configuration over I2C
 
     Developed for DAMC-FMC2ZUP by MicroTCA Tech Lab, but can be also used on
     other boards with the same chip and Linux I2C subsystem.
@@ -31,7 +31,7 @@ class Si5341driver:
     REG_ADDR_TEMP_GRADE = (0x9, 0)
     REG_ADDR_PKG_ID = (0xa, 0)
 
-    EXPECTED_PN_BASE = 0x5341
+    EXPECTED_PN_BASE = [0x5340, 0x5341]
 
     TEMP_GRADE_MAP = {
         0x0: "Industrial"
@@ -58,7 +58,7 @@ class Si5341driver:
         pn0 = self.rd(self.REG_ADDR_PN_BASE0)
         pn1 = self.rd(self.REG_ADDR_PN_BASE1)
         pn_base = struct.unpack("H", struct.pack("BB", pn0, pn1))[0]
-        assert pn_base == self.EXPECTED_PN_BASE, \
+        assert pn_base in self.EXPECTED_PN_BASE, \
             "Unrecognized Part Number, expected %04x, got %04x" % \
             (self.EXPECTED_PN_BASE, pn_base)
 

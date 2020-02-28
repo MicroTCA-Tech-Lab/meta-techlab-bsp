@@ -8,18 +8,21 @@ from slcc.extra_logging import LEVEL_TRACE
 
 class SiLabsTxtParser:
     EXP_HEADER = "# Si534x/7x/8x/9x Registers Script"
-    EXP_PART_VAL = "Si5341"
+    EXP_PART_VAL = ["Si5340", "Si5341"]
 
     def __init__(self, filename):
         self.logger = logging.getLogger(__name__)
         self.filename = filename
 
-    def parse(self, callback=None):
+    def parse(self, skip_postamble, callback=None):
         """ Parses the Si Labs txt file and calls callback for each register write
 
         Args:
+            skip_postamble: skips post-amble (needed for when we run CPU from the clock)
             callback: format ((reg addr, page), value)
         """
+
+        self.logger.debug("parse called, skip_postamble = %s", skip_postamble)
 
         with open(self.filename, "r") as f:
             self.logger.debug("opened %s", self.filename)
@@ -32,10 +35,11 @@ class SiLabsTxtParser:
             f = itertools.dropwhile(lambda l: l.find("# Part") == 0, f)
             next(f)
             part = next(f).strip().split(": ")[1]
-            assert part == self.EXP_PART_VAL, \
+            assert part in self.EXP_PART_VAL, \
                 "Part number does not match, expect %s, got %s" % (self.EXP_PART_VAL, part)
 
             seen_header = False
+            seen_postamble = False
 
             # we are not Python built-in CSV reader, because of delay line in comments
             for line in f:
@@ -49,7 +53,7 @@ class SiLabsTxtParser:
                     seen_header = True
 
                 elif line.find("# Delay") == 0:
-                    self.logger.debug("Seen delay line: %s", line)
+                    self.logger.debug("Seen line with delay statement: %s", line)
                     arr = line.split(" ")
                     line_val = int(arr[2])
                     line_units = arr[3]
@@ -59,7 +63,11 @@ class SiLabsTxtParser:
 
                     time.sleep(line_val/1000)
 
-                elif seen_header and line[0] != "#":
+                elif line.find("# Start configuration postamble") == 0:
+                    self.logger.debug("Seen line with postamble start: %s", line)
+                    seen_postamble = True
+
+                elif seen_header and not (skip_postamble and seen_postamble) and line[0] != "#":
                     arr = line.split(",")
                     full_addr = int(arr[0], 16)
                     val = int(arr[1], 16)

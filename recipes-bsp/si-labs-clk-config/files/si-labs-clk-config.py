@@ -23,7 +23,7 @@ import logging
 
 import smbus
 
-from slcc.Si5341driver import Si5341driver
+from slcc.Si534xdriver import Si534xdriver
 from slcc.SiLabsTxtParser import SiLabsTxtParser
 from slcc.extra_logging import LEVEL_TRACE
 
@@ -44,6 +44,8 @@ def main():
                         help='select I2C bus')
     parser.add_argument('i2c_addr', type=lambda x: int(x, 0),
                         help='address of the device on I2C bus')
+    parser.add_argument('--no_reset',action='store_true',
+                        help='do not reset the clk gen after the programming')
     parser.add_argument('filename', type=str,
                         help='txt from Si Labs ClockBuilder Pro')
 
@@ -64,9 +66,9 @@ def main():
     logging.debug("  filename: %s", args.filename)
 
     clk_bus = smbus.SMBus(args.i2c_bus)
-    si5341 = Si5341driver(clk_bus, args.i2c_addr)
+    si5341 = Si534xdriver(clk_bus, args.i2c_addr)
     parser = SiLabsTxtParser(args.filename)
-    parser.parse(si5341.wr)
+    parser.parse(args.no_reset, si5341.wr)
 
     logging.log(logging.INFO, "programming done")
 
