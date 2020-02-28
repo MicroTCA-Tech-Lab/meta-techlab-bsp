@@ -30,6 +30,12 @@
         output-high;
         gpios = <20 GPIO_ACTIVE_HIGH>;
     };
+
+    usbc_pd_reset {
+        gpio-hog;
+        output-low;
+        gpios = <12 GPIO_ACTIVE_HIGH>;
+    };
 };
 
 / {
