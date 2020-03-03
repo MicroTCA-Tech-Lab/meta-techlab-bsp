@@ -1,5 +1,6 @@
 
 #include "dt-bindings/gpio/gpio.h"
+#include "dt-bindings/phy/phy.h"
 
 &gem3 {
     phy-handle = <&phy0>;
@@ -61,4 +62,13 @@
     };
 
     /* Si Labs at 0x76, 0x77 are handled by a separate script */
+};
+
+&dwc3_0 {
+	status = "okay";
+	dr_mode = "host";
+	snps,usb3_lpm_capable;
+	phy-names = "usb3-phy";
+	phys = <&lane2 PHY_TYPE_USB3 0 2 26000000>;
+	maximum-speed = "super-speed";
 };
