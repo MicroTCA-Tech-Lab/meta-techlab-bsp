@@ -23,6 +23,7 @@ class TPS65987:
     REG_ADDR_PROTO_VER = (2, 4)
     REG_ADDR_MODE = (3, 4)
     REG_ADDR_TYPE = (4, 4)
+    REG_ADDR_CUSTOMER_USE = (6, 8)
 
     REG_ADDR_CMD0 = 8
     REG_ADDR_DATA0 = 9
@@ -50,16 +51,19 @@ class TPS65987:
         proto_ver = self._rd_block(self.REG_ADDR_PROTO_VER)
         mode = self._rd_block(self.REG_ADDR_MODE)
         typ = self._rd_block(self.REG_ADDR_TYPE)
+        customer_use = self._rd_block(self.REG_ADDR_CUSTOMER_USE)
 
         vid = struct.unpack("I", bytes(vid))[0]
         did = struct.unpack("I", bytes(did))[0]
         proto_ver = struct.unpack("I", bytes(proto_ver))[0]
+        customer_use = struct.unpack("Q", bytes(customer_use))[0]
 
         assert proto_ver == self.EXPECT_PROTO_VER
 
         print("VID      = 0x{0:08x}".format(vid))
         print("DID      = 0x{0:08x}".format(did))
         print("ProtoVer = 0x{0:08x}".format(proto_ver))
+        print("Cust Use = 0x{0:016x}".format(customer_use))
 
     def cmd_data(self, cmd, data_in, len_data_out):
         """ Based on 4.3 Command in SLVAE21A
