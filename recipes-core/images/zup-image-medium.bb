@@ -13,3 +13,5 @@ IMAGE_INSTALL_append = " python3"
 IMAGE_INSTALL_append = " vim"
 IMAGE_INSTALL_append = " si-labs-clk-config"
 IMAGE_INSTALL_append = " usb-c-pd-programmer"
+IMAGE_INSTALL_append = " udmabuf"
+
