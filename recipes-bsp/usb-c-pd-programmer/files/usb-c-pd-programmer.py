@@ -24,6 +24,7 @@ class TPS65987:
     REG_ADDR_MODE = (3, 4)
     REG_ADDR_TYPE = (4, 4)
     REG_ADDR_CUSTOMER_USE = (6, 8)
+    REG_TYPE_C_STATE = (0x69, 4)
 
     REG_ADDR_CMD0 = 8
     REG_ADDR_DATA0 = 9
@@ -100,6 +101,20 @@ class TPS65987:
         self.logger.log(LEVEL_TRACE, "  data out = %s", data_out[1:])
         return bytes(data_out[1:])
 
+    def diag(self):
+        """ Print some diagnostics registers
+
+        The selection of the registers is a little bit arbitrary, we selected
+        what has deemed important during the bring-up of DAMC-FMC2ZUP
+        """
+        type_c_state = self._rd_block(self.REG_TYPE_C_STATE)
+        self.logger.log(LEVEL_TRACE, "  Type C state = %s", type_c_state)
+
+        print("Type C State:")
+        print("  CC Pin for PD = 0x{0:02x}".format(type_c_state[0]))
+        print("  CC1 Pin State = 0x{0:02x}".format(type_c_state[1]))
+        print("  CC2 Pin State = 0x{0:02x}".format(type_c_state[2]))
+        print("  Type C Port State = 0x{0:02x}".format(type_c_state[3]))
 
     def lock(self, unlock_key):
         unlock_key_list = list(struct.pack("I", unlock_key))
@@ -156,8 +171,9 @@ def main():
                         help='print debug information')
     parser.add_argument('--trace', action='store_true',
                         help='print trace information (very verbose)')
-    parser.add_argument('filename', type=str, help='.bin file')
-
+    parser.add_argument('--program', type=str, nargs=1,
+                        help='program bin file to Flash')
+    parser.add_argument('--diag', action='store_true', help='print diag info')
     args = parser.parse_args()
 
     if args.trace:
@@ -171,7 +187,7 @@ def main():
 
 
     print("TI USB-C PD Programmer by MicroTCA Tech Lab at DESY")
-
+    logging.log(LEVEL_TRACE, "logging: arguments = %s", args)
 
     DAMC_FMC2ZUP_TPS_I2C_BUS = 1
     i2c_bus = smbus.SMBus(DAMC_FMC2ZUP_TPS_I2C_BUS)
@@ -179,36 +195,39 @@ def main():
     tps = TPS65987(i2c_bus)
     tps.get_info()
 
-    data = open(args.filename, "rb").read()
-    logging.debug("from %s read %d bytes", args.filename, len(data))
+    if args.program:
+        data = open(args.program[0], "rb").read()
+        logging.debug("from %s read %d bytes", args.filename, len(data))
 
-    tps.lock(0)
+        tps.lock(0)
 
-    TPS_FLASH_SECTOR_SIZE = 4*1024
-    sectors_to_erase = math.ceil(len(data) / TPS_FLASH_SECTOR_SIZE)
-    logging.debug("sectors to erase: %d", sectors_to_erase)
+        TPS_FLASH_SECTOR_SIZE = 4*1024
+        sectors_to_erase = math.ceil(len(data) / TPS_FLASH_SECTOR_SIZE)
+        logging.debug("sectors to erase: %d", sectors_to_erase)
 
-    tps.flem(0, sectors_to_erase)
-    tps.flad(0)
+        tps.flem(0, sectors_to_erase)
+        tps.flad(0)
 
-    CHUNK_SIZE = 16
-    PROGRESS_BAR_SIZE = 76
+        CHUNK_SIZE = 16
+        PROGRESS_BAR_SIZE = 76
 
-    print("Start programming Flash memory")
+        print("Start programming Flash memory")
 
-    for i, chunk in enumerate(chunks(data, CHUNK_SIZE)):
-        tps.flwd(list(chunk))
+        for i, chunk in enumerate(chunks(data, CHUNK_SIZE)):
+            tps.flwd(list(chunk))
 
-        # print progress bar
-        bar_nr_full = math.floor(PROGRESS_BAR_SIZE*(i+1)/(len(data)/CHUNK_SIZE))
-        bar_nr_empty = PROGRESS_BAR_SIZE - bar_nr_full
-        bar_end = "\n" if (args.debug or args.trace) else "\b"*(PROGRESS_BAR_SIZE+2)
-        print("[" + "="*bar_nr_full + " "*bar_nr_empty + "]", end=bar_end)
+            # print progress bar
+            bar_nr_full = math.floor(PROGRESS_BAR_SIZE*(i+1)/(len(data)/CHUNK_SIZE))
+            bar_nr_empty = PROGRESS_BAR_SIZE - bar_nr_full
+            bar_end = "\n" if (args.debug or args.trace) else "\b"*(PROGRESS_BAR_SIZE+2)
+            print("[" + "="*bar_nr_full + " "*bar_nr_empty + "]", end=bar_end)
 
-    if bar_end != "\n":
-        print("")
+        if bar_end != "\n":
+            print("")
 
-    print("Done")
+        print("Done programming")
+    elif args.diag:
+        tps.diag()
 
 if __name__ == "__main__":
     main()
