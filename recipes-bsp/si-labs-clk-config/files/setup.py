@@ -5,7 +5,7 @@ setup(
     packages=["slcc"],
     scripts=["si-labs-clk-config.py"],
 
-    install_requires=[],
+    install_requires=["smbus"],
 
     package_data={
     },
