@@ -197,7 +197,7 @@ def main():
 
     if args.program:
         data = open(args.program[0], "rb").read()
-        logging.debug("from %s read %d bytes", args.filename, len(data))
+        logging.debug("from %s read %d bytes", args.program[0], len(data))
 
         tps.lock(0)
 
