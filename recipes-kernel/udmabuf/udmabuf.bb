@@ -1,12 +1,9 @@
 CRIPTION = "udmabuf(User space mappable DMA Buffer)"
 LICENSE = "BSD"
-PV = "2.1.2"
+PV = "1.4.5"
 PR = "r0"
 
-#SRC_URI = "git://github.com/ikwzm/udmabuf.git;protocol=git;tag=v2.1.2"
-SRCREV = "${AUTOREV}"
-SRC_URI = "git://github.com/ikwzm/udmabuf.git"
-#SRC_URI[sha256sum] = "ad96c798ed85ec61de4cd7e32b5939a793d7bd0ec09614db7d02ab7e033a0ce7"
+SRC_URI = "git://github.com/ikwzm/udmabuf.git;tag=v1.4.5"
 
 LIC_FILES_CHKSUM = "file://LICENSE;md5=bebf0492502927bef0741aa04d1f35f5" 
 
