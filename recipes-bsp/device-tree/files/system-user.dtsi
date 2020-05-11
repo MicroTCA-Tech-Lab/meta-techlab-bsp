@@ -72,3 +72,20 @@
 	phys = <&lane2 PHY_TYPE_USB3 0 2 26000000>;
 	maximum-speed = "super-speed";
 };
+
+// copied from ZCU104
+// and https://www.zachpfeffer.com/single-post/Integrate-a-QSPI-using-PetaLinux-Tools-Part-2
+// going very slow
+&qspi {
+	status = "okay";
+	flash@0 {
+		compatible = "jedec,spi-nor";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x0>;
+		spi-tx-bus-width = <4>;
+		spi-rx-bus-width = <4>;
+		spi-max-frequency = <4500000>;
+	};
+};
+
