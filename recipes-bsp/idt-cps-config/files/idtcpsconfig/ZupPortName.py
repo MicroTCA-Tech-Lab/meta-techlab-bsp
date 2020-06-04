@@ -13,10 +13,10 @@ class ZupPortName(enum.IntEnum):
     Z3_AMC_TCLK = 5
     Z3_AMC_CLK1 = 6
     Z3_RTM_CLK1 = 7
-    TCLKD = 8
-    TCLKC = 9
-    TCLKA = 10
-    TCLKB = 11
+    TCLKA = 8
+    TCLKB = 9
+    TCLKC = 10
+    TCLKD = 11
     WR_PLL3 = 12
     FMC2_CLK3_BIDIR = 13
     FMC2_CLK2_BIDIR = 14

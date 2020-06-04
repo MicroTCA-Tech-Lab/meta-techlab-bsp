@@ -5,7 +5,7 @@ from collections import namedtuple
 
 class PortConfig(namedtuple("PortConf", ["source", "polarity", "term", "output"])):
     def __str__(self):
-        return "PortConfig(source = {source:2d}, pol = {polarity}, term = {term}, output = {output}" \
+        return "PortConfig(source = {source:2d}, pol = {polarity}, term = {term}, output = {output})" \
                 .format(**self._asdict())
 
     @classmethod
