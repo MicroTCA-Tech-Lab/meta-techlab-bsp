@@ -1,9 +1,9 @@
 CRIPTION = "udmabuf(User space mappable DMA Buffer)"
 LICENSE = "BSD"
-PV = "1.4.5"
+PV = "2.1.5"
 PR = "r0"
 
-SRC_URI = "git://github.com/ikwzm/udmabuf.git;tag=v1.4.5"
+SRC_URI = "git://github.com/ikwzm/udmabuf.git;tag=v${PV}"
 
 LIC_FILES_CHKSUM = "file://LICENSE;md5=bebf0492502927bef0741aa04d1f35f5" 
 
@@ -21,8 +21,12 @@ SRC_URI_append = " file://0001-Update-Makefile-for-Yocto-env-variables.patch \
 "
 
 FILES_${PN} = " \
-    /etc/rcS.d/S80udmabuf \
-    /etc/init.d/udmabuf.sh \
+    /lib \
+    /lib/modules \
+    /lib/modules/5.4.0-xilinx-v2020.1 \
+    /lib/modules/5.4.0-xilinx-v2020.1/extra \
+    ${sysconfdir}/rcS.d/S80udmabuf \
+    ${sysconfdir}/init.d/udmabuf.sh \
 "
 
 do_install_append() {

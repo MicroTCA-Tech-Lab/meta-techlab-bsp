@@ -1,6 +1,6 @@
-From e96c3063cc2c2f05fdd4302c5c0da3bfe5cf44a3 Mon Sep 17 00:00:00 2001
+From 6e9f80c8d12940b52e41b8353ddecb5209b7915d Mon Sep 17 00:00:00 2001
 From: Jan Marjanovic <jan.marjanovic@desy.de>
-Date: Fri, 1 Nov 2019 15:58:26 +0100
+Date: Mon, 13 Jul 2020 12:56:21 +0200
 Subject: [PATCH] Update Makefile for Yocto (env variables)
 
 ---
@@ -8,10 +8,10 @@ Subject: [PATCH] Update Makefile for Yocto (env variables)
  1 file changed, 8 insertions(+), 17 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 31974af..d279481 100644
+index 6fcb180..7184db8 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -1,23 +1,14 @@
+@@ -1,24 +1,15 @@
 -HOST_ARCH       ?= $(shell uname -m | sed -e s/arm.*/arm/ -e s/aarch64.*/arm64/)
 -ARCH            ?= $(shell uname -m | sed -e s/arm.*/arm/ -e s/aarch64.*/arm64/)
 -KERNEL_SRC_DIR  ?= /lib/modules/$(shell uname -r)/build
@@ -27,17 +27,18 @@ index 31974af..d279481 100644
 - endif
 -endif
  
- obj-m := udmabuf.o
+ u-dma-buf-obj           := u-dma-buf.o
+ obj-$(CONFIG_U_DMA_BUF) += $(u-dma-buf-obj)
  
 +SRC := $(shell pwd)
 +
 +
  all:
--	make -C $(KERNEL_SRC_DIR) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) M=$(PWD) modules
+-	make -C $(KERNEL_SRC_DIR) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) M=$(PWD) obj-m=$(u-dma-buf-obj) modules
 +	$(MAKE) -C $(KERNEL_SRC) M=$(SRC) modules
  
 -clean:
--	make -C $(KERNEL_SRC_DIR) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) M=$(PWD) clean
+-	make -C $(KERNEL_SRC_DIR) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) M=$(PWD) obj-m=$(u-dma-buf-obj) clean
 +modules_install:
 +	$(MAKE) -C $(KERNEL_SRC) M=$(SRC) modules_install
  
