@@ -13,7 +13,7 @@ class HwAccessAarch64(object):
 
     user_filename = "/dev/mem"
     self.fd_user = os.open(user_filename, os.O_RDWR)
-    self.mem = mmap.mmap(self.fd_user, 1 * 1024 * 1024, offset=0x80000000)
+    self.mem = mmap.mmap(self.fd_user, 256 * 1024 * 1024, offset=0x80000000)
     self.logger.debug("Opened %s, fd = %d", user_filename, self.fd_user)
 
 
