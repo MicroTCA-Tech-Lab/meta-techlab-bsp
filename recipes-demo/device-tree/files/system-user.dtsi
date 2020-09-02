@@ -18,6 +18,9 @@
 &sdhci0 {
     // WP pin is not available on microSD, not connected on the board
     disable-wp;
+
+    // the HW does not support SD 3.0
+    no-1-8-v;
 };
 
 &gpio {
