@@ -2,6 +2,12 @@
 #include "dt-bindings/gpio/gpio.h"
 #include "dt-bindings/phy/phy.h"
 
+/ {
+	chosen {
+		xlnx,eeprom = &eeprom_mac;
+	};
+};
+
 &gem3 {
     phy-handle = <&phy0>;
 
@@ -55,6 +61,15 @@
     };
 
     /* Si Labs at 0x76, 0x77 are handled by a separate script */
+};
+
+&eeprom_mac  {
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	eth_mac: eth_mac@fa {
+		reg = <0xfa 0x6>;
+	};
 };
 
 &dwc3_0 {
