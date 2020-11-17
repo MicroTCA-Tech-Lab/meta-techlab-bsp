@@ -1,7 +1,7 @@
 CRIPTION = "Configuration tool for Si Labs chips on I2C bus"
 LICENSE = "CLOSED"
 PV = "1.2"
-PR = "r0"
+PR = "r1"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
