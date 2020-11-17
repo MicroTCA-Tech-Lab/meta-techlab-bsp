@@ -1,7 +1,7 @@
 CRIPTION = "Configuration tool for Si Labs chips on I2C bus"
 LICENSE = "CLOSED"
-PV = "1.1"
-PR = "r2"
+PV = "1.2"
+PR = "r0"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -13,6 +13,7 @@ SRC_URI = " \
     file://slcc/extra_logging.py \
     file://slcc/Si534xdriver.py \
     file://slcc/SiLabsTxtParser.py \
+    file://example_config/example_zup_0x75_zone3.txt \
     file://example_config/example_zup_0x76_ps.txt \
     file://example_config/example_zup_0x77_zup.txt \
     file://si-labs-clk-init.sh \
@@ -23,18 +24,23 @@ RDEPENDS_${PN} = "python python3-smbus"
 inherit setuptools3
 
 FILES_${PN} += " \
+    /opt/mtca-tech-lab/damc-fmc2zup/clock_config/0x75_zone3.txt \
     /opt/mtca-tech-lab/damc-fmc2zup/clock_config/0x76_ps.txt \
     /opt/mtca-tech-lab/damc-fmc2zup/clock_config/0x77_zup.txt \
+    /opt/mtca-tech-lab/damc-fmc2zup/clock_config/example_zup_0x75_zone3.txt \
     /opt/mtca-tech-lab/damc-fmc2zup/clock_config/example_zup_0x76_ps.txt \
     /opt/mtca-tech-lab/damc-fmc2zup/clock_config/example_zup_0x77_zup.txt \
 "
 
 do_install_append() {
     install -d ${D}${base_prefix}/opt/mtca-tech-lab/damc-fmc2zup/clock_config/
+    install -m 0644 ${WORKDIR}/example_config/example_zup_0x75_zone3.txt  ${D}${base_prefix}/opt/mtca-tech-lab/damc-fmc2zup/clock_config/
     install -m 0644 ${WORKDIR}/example_config/example_zup_0x76_ps.txt  ${D}${base_prefix}/opt/mtca-tech-lab/damc-fmc2zup/clock_config/
     install -m 0644 ${WORKDIR}/example_config/example_zup_0x77_zup.txt ${D}${base_prefix}/opt/mtca-tech-lab/damc-fmc2zup/clock_config/
 
     # configs are symbolic links so that other applications can overwrite them
+    ln -s -r ${D}${base_prefix}/opt/mtca-tech-lab/damc-fmc2zup/clock_config/example_zup_0x75_zone3.txt \
+        ${D}${base_prefix}/opt/mtca-tech-lab/damc-fmc2zup/clock_config/0x75_zone3.txt
     ln -s -r ${D}${base_prefix}/opt/mtca-tech-lab/damc-fmc2zup/clock_config/example_zup_0x76_ps.txt \
         ${D}${base_prefix}/opt/mtca-tech-lab/damc-fmc2zup/clock_config/0x76_ps.txt
     ln -s -r ${D}${base_prefix}/opt/mtca-tech-lab/damc-fmc2zup/clock_config/example_zup_0x77_zup.txt \
