@@ -7,3 +7,5 @@ IMAGE_INSTALL_append = " i2c-tools"
 IMAGE_INSTALL_append = " phytool"
 IMAGE_INSTALL_append = " si-labs-clk-config"
 IMAGE_INSTALL_append = " usb-c-pd-programmer"
+IMAGE_INSTALL_append = " fw-plreset"
+
