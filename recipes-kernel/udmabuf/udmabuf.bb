@@ -1,6 +1,6 @@
 CRIPTION = "udmabuf(User space mappable DMA Buffer)"
 LICENSE = "BSD"
-PV = "2.1.5"
+PV = "3.2.2"
 PR = "r0"
 
 SRC_URI = "git://github.com/ikwzm/udmabuf.git;tag=v${PV}"
@@ -25,9 +25,12 @@ FILES_${PN} = " \
     /lib/modules \
     /lib/modules/5.4.0-xilinx-v2020.1 \
     /lib/modules/5.4.0-xilinx-v2020.1/extra \
+    /lib/modules/5.4.0-xilinx-v2020.1/extra/u-dma-buf.ko \
     ${sysconfdir}/rcS.d/S80udmabuf \
     ${sysconfdir}/init.d/udmabuf.sh \
 "
+
+RPROVIDES_${PN} += "kernel-module-u-dma-buf-5.4.0-xilinx-v2020.1"
 
 do_install_append() {
     install -d ${D}${sysconfdir}/init.d
