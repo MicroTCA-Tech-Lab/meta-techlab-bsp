@@ -28,6 +28,11 @@ set tree [hsi::create_dt_tree -dts_file zup_app.dts]
 set root_node [hsi::create_dt_node -name "/"]
 set bus_node [hsi::create_dt_node -name "amba_app" -label "amba_app" -unit_addr 0 -object $root_node]
 
+hsi::utils::add_new_dts_param $bus_node "#address-cells" "2" comment
+hsi::utils::add_new_dts_param $bus_node "#size-cells" "2" comment
+hsi::utils::add_new_dts_param $bus_node "compatible" "simple-bus" string
+hsi::utils::add_new_dts_param $bus_node "ranges" "" boolean
+
 
 foreach cell [hsi::get_cells] {
     set comp_name [hsi::get_property CONFIG.Component_Name [hsi::get_cells $cell]]
@@ -48,9 +53,9 @@ foreach cell [hsi::get_cells] {
 
         if {[expr {$mem ne ""}]} {
 
-			set base [string tolower [hsi::get_property BASE_VALUE $mem]]
-			set high [string tolower [hsi::get_property HIGH_VALUE $mem]]
-			set size [format 0x%x [expr {${high} - ${base} + 1}]]
+            set base [string tolower [hsi::get_property BASE_VALUE $mem]]
+            set high [string tolower [hsi::get_property HIGH_VALUE $mem]]
+            set size [format 0x%x [expr {${high} - ${base} + 1}]]
 
             if {[regexp -nocase {0x([0-9a-f]{9})} "$base" match]} {
                 set temp $base
@@ -77,7 +82,8 @@ foreach cell [hsi::get_cells] {
             }
 
             set ip_name [hsi::get_property HIER_NAME [hsi::get_cells $cell]]
-            set comp_node [hsi::create_dt_node -name $ip_name -label $ip_name -unit_addr $base -object $bus_node]
+	    set unit_addr [string range $base 2 99]
+            set comp_node [hsi::create_dt_node -name $ip_name -label $ip_name -unit_addr $unit_addr -object $bus_node]
             hsi::utils::add_new_dts_param $comp_node "compatible" "generic-uio" string
             hsi::utils::add_new_dts_param $comp_node "reg" "$reg" intlist
         }
