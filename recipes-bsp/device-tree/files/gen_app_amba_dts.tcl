@@ -34,6 +34,43 @@ hsi::utils::add_new_dts_param $bus_node "compatible" "simple-bus" string
 hsi::utils::add_new_dts_param $bus_node "ranges" "" boolean
 
 
+################################################################################
+# create two dicts with info on interrupts
+
+set pl_ps_irq_ips [dict create]
+set pl_ps_irq_names [dict create]
+
+set pl_ps_irq_net [hsi::get_nets -of_object [hsi::get_ports inst_app_inst_app_system_app_i_pl_ps_irq]]
+set pl_ps_irq_net_sink [hsi::get_cells -of_object [hsi::get_nets $pl_ps_irq_net ]]
+
+if {[expr {$pl_ps_irq_net_sink ne ""}] && [string match -nocase [hsi::get_property IP_NAME $pl_ps_irq_net_sink] "xlconcat"]} {
+    puts "PL PS IRQ: concat"
+    set concat_nets [hsi::get_nets -of_object [hsi::get_cells $pl_ps_irq_net_sink]]
+    foreach concat_net $concat_nets {
+        set port_in [hsi::get_pins -of_object $concat_net -filter {DIRECTION==I}]
+        set port_out [hsi::get_pins -of_object $concat_net -filter {DIRECTION==O}]
+        set v [regexp {^In([0-9]+)} $port_in match match_idx]
+        if {$v} {
+            puts "$concat_net -> $match_idx"
+            set source_ips [hsi::get_cells -of_object $concat_net]
+            foreach source_ip $source_ips {
+                if ([expr {$source_ip != $pl_ps_irq_net_sink}]) {
+                    puts "  $source_ip . $port_out"
+                    set comp_name [hsi::get_property CONFIG.Component_Name [hsi::get_cells $source_ip]]
+                    dict append pl_ps_irq_ips $comp_name $match_idx
+                    dict append pl_ps_irq_names $comp_name $port_out
+                }
+            }
+        }
+    }
+} else {
+    puts "PL PS IRQ: direct IP"
+    # not yet implemented
+}
+
+
+################################################################################
+
 foreach cell [hsi::get_cells] {
     set comp_name [hsi::get_property CONFIG.Component_Name [hsi::get_cells $cell]]
     set is_in_app [string match "system_app*" $comp_name]
@@ -82,10 +119,26 @@ foreach cell [hsi::get_cells] {
             }
 
             set ip_name [hsi::get_property HIER_NAME [hsi::get_cells $cell]]
-	    set unit_addr [string range $base 2 99]
+            set unit_addr [string range $base 2 99]
             set comp_node [hsi::create_dt_node -name $ip_name -label $ip_name -unit_addr $unit_addr -object $bus_node]
             hsi::utils::add_new_dts_param $comp_node "compatible" "generic-uio" string
             hsi::utils::add_new_dts_param $comp_node "reg" "$reg" intlist
+
+            # add interrupts (if they were detected before)
+            if {[dict exists $pl_ps_irq_ips $comp_name]} {
+                # interrupt-names = "s2mm_introut";
+                # interrupt-parent = <&gic>;
+                # interrupts = <0 89 4>;
+
+                set irq_offs [dict get $pl_ps_irq_ips $comp_name]
+                set irq_name [dict get $pl_ps_irq_names $comp_name]
+                set irq_idx [expr {$irq_offs + 89}]
+
+                hsi::utils::add_new_dts_param $comp_node "interrupt-names" "$irq_name" string
+                hsi::utils::add_new_dts_param $comp_node "interrupt-parent" "<&gic>" string
+                hsi::utils::add_new_dts_param $comp_node "interrupts" "0 $irq_idx 4" intlist
+
+            }
         }
     }
 }
