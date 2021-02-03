@@ -10,6 +10,9 @@ inherit pkgconfig cmake
 
 SRC_URI = " \
 	file://CMakeLists.txt \
+	file://inc/AxiTrafficGenLfsr.hpp \
+	file://inc/DataHandlerAbstract.hpp \
+	file://inc/DataHandlerPrint.hpp \
 	file://inc/UDmaBuf.hpp \
 	file://inc/UioAxiDmaIf.hpp \
 	file://inc/UioIfFactory.hpp \
@@ -17,11 +20,14 @@ SRC_URI = " \
 	file://inc/UioMemSgdma.hpp \
 	file://inc/UioTrafficGen.hpp \
 	file://src/axi_dma_demo.cpp \
+	file://src/DataHandlerAbstract.cpp \
+	file://src/DataHandlerPrint.cpp \
 	file://src/UDmaBuf.cpp \
 	file://src/UioAxiDmaIf.cpp \
 	file://src/UioMemSgdma.cpp \
 	file://src/UioTrafficGen.cpp \
 "
+
 S="${WORKDIR}"
 
 do_install() {
