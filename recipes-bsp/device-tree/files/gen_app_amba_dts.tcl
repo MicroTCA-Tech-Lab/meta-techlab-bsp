@@ -5,7 +5,7 @@
 
 
 if {$argc != 3} {
-	puts "Usage: $argv0 XSCT_DIR WORKDIR"
+	puts "Usage: $argv0 XSCT_DIR WORKDIR HDF_OR_XSA_PATH"
 	exit 1
 }
 
@@ -47,12 +47,18 @@ if {[expr {$pl_ps_irq_net_sink ne ""}] && [string match -nocase [hsi::get_proper
     puts "PL PS IRQ: concat"
     set concat_nets [hsi::get_nets -of_object [hsi::get_cells $pl_ps_irq_net_sink]]
     foreach concat_net $concat_nets {
+        puts "  dbg: concat_net  = $concat_nets"
         set port_in [hsi::get_pins -of_object $concat_net -filter {DIRECTION==I}]
         set port_out [hsi::get_pins -of_object $concat_net -filter {DIRECTION==O}]
-        set v [regexp {^In([0-9]+)} $port_in match match_idx]
+        puts "  dbg:   port_in  = $port_in"
+        puts "  dbg:   port_out = $port_out"
+        set v [regexp {(?:\s|^)In([0-9]+)} $port_in match match_idx]
+        puts "  dbg:     v = $v"
         if {$v} {
             puts "$concat_net -> $match_idx"
             set source_ips [hsi::get_cells -of_object $concat_net]
+            puts "  dbg:       source_ips = $source_ips"
+            puts "  dbg:       match_idx = $match_idx"
             foreach source_ip $source_ips {
                 if ([expr {$source_ip != $pl_ps_irq_net_sink}]) {
                     puts "  $source_ip . $port_out"
