@@ -1,4 +1,6 @@
 
+PR_append="+fifo_fix"
+
 # This patch removes a FIFO in case there is no monitor (framebuffer) present.
 # When there is no monitor present, the FIFO is not read and blocks
 # /etc/init.d/rc script which would like to communicate the progress of the
