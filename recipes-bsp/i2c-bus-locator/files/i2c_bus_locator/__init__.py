@@ -79,6 +79,6 @@ def i2c_bus_locator(
         addr_ok = addr is None or adpt_addr == addr
         if comp_ok and addr_ok:
             adpt_bus_nr = adpt.split("-")[1]
-            ret_list.append(adpt_bus_nr)
+            ret_list.append(int(adpt_bus_nr))
 
     return ret_list
