@@ -82,11 +82,3 @@ def i2c_bus_locator(
             ret_list.append(adpt_bus_nr)
 
     return ret_list
-
-
-if __name__ == "__main__":
-    print("Quick demo")
-
-    print("all buses:", i2c_bus_locator())
-    print("all CDNS buses:", i2c_bus_locator(compat="cdns"))
-    print("first CDNS bus:", i2c_bus_locator(compat="cdns", addr=0xFF020000)[0])
