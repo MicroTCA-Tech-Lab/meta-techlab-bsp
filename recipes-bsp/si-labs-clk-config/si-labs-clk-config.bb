@@ -1,7 +1,7 @@
 CRIPTION = "Configuration tool for Si Labs chips on I2C bus"
 LICENSE = "CLOSED"
-PV = "1.2"
-PR = "r1"
+PV = "1.3"
+PR = "r0"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -19,7 +19,7 @@ SRC_URI = " \
     file://si-labs-clk-init.sh \
 "
 
-RDEPENDS_${PN} = "python python3-smbus"
+RDEPENDS_${PN} = "python python3-smbus i2c-bus-locator"
 
 inherit setuptools3
 

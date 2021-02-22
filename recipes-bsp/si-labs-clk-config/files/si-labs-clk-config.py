@@ -27,12 +27,14 @@ from slcc.Si534xdriver import Si534xdriver
 from slcc.SiLabsTxtParser import SiLabsTxtParser
 from slcc.extra_logging import LEVEL_TRACE
 
+from i2c_bus_locator import i2c_bus_locator
+
 
 def main():
     """ Process input args, parse text file, program the device over I2C """
 
-    # on DAMC-FMC2ZUP all clock I2c are on bus 0 - use as a default value
-    ZUP_CLK_BUS = 0
+    # on DAMC-FMC2ZUP all clock I2c are on the first bus
+    ZUP_CLK_BUS = i2c_bus_locator(compat="cdns", addr=0xFF020000)[0]
 
     parser = argparse.ArgumentParser(
         description='Program Si Labs device on I2C bus')
