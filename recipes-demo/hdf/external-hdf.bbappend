@@ -13,5 +13,8 @@ HDF_EXT = "xsa"
 
 S = "${WORKDIR}"
 
-FILESEXTRAPATHS_prepend_damc-fmc2zup := "${THISDIR}:"
+ZUP_FPGA_VARIANT ?= "zu11eg"
+
+
+FILESEXTRAPATHS_prepend_damc-fmc2zup := "${THISDIR}/${ZUP_FPGA_VARIANT}:"
 
