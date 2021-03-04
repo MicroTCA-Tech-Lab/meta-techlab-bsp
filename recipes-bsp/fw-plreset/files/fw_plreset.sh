@@ -10,7 +10,7 @@ SCRIPT_NAME=$0
 
 PL_RESET_OFFSET=172
 # reset level: 0 = active high, 1 = active low
-RESET_LEVEL=0
+RESET_LEVEL=1
 
 #===============================================================================
 # find GPIO controller
