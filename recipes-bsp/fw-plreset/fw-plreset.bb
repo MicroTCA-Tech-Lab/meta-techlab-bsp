@@ -1,7 +1,7 @@
 CRIPTION = "Programable Logic reset"
 LICENSE = "CLOSED"
 LIC_FILES_CHKSUM=""
-PV = "1.0.0"
+PV = "2.0.0"
 PR = "r0"
 
 
