@@ -18,8 +18,8 @@ puts "WORKDIR: $WORKDIR"
 puts "HDF_OR_XSA_PATH: $HDF_OR_XSA_PATH"
 
 
-source ${XSCT_DIR}/scripts/hsm/xillib_hw.tcl
-source ${XSCT_DIR}/scripts/hsm/xillib_sw.tcl
+#source ${XSCT_DIR}/scripts/hsm/xillib_hw.tcl
+#source ${XSCT_DIR}/scripts/hsm/xillib_sw.tcl
 
 hsi::set_repo_path $WORKDIR/git
 hsi::open_hw_design $HDF_OR_XSA_PATH
@@ -28,10 +28,27 @@ set tree [hsi::create_dt_tree -dts_file zup_app.dts]
 set root_node [hsi::create_dt_node -name "/"]
 set bus_node [hsi::create_dt_node -name "amba_app" -label "amba_app" -unit_addr 0 -object $root_node]
 
-hsi::utils::add_new_dts_param $bus_node "#address-cells" "2" comment
-hsi::utils::add_new_dts_param $bus_node "#size-cells" "2" comment
-hsi::utils::add_new_dts_param $bus_node "compatible" "simple-bus" string
-hsi::utils::add_new_dts_param $bus_node "ranges" "" boolean
+
+proc hsi_utils_add_new_dts_param { node  param_name param_value param_type {param_decription ""} } {
+	if { $param_type != "boolean" && $param_type != "comment" && [llength $param_value] == 0 } {
+		error "param_value can only be empty if the param_type is boolean, value is must for other data types"
+	}
+	if { $param_type == "boolean" && [llength $param_value] != 0 } {
+                error "param_value can only be empty if the param_type is boolean"
+        }
+	common::set_property $param_name $param_value $node
+	set param [common::get_property CONFIG.$param_name $node]
+	common::set_property TYPE $param_type $param
+	common::set_property DESC $param_decription $param
+    return $param
+}
+
+
+hsi_utils_add_new_dts_param $bus_node "#address-cells" "2" comment
+hsi_utils_add_new_dts_param $bus_node "#size-cells" "2" comment
+hsi_utils_add_new_dts_param $bus_node "compatible" "simple-bus" string
+hsi_utils_add_new_dts_param $bus_node "ranges" "" boolean
+
 
 
 ################################################################################
@@ -127,8 +144,8 @@ foreach cell [hsi::get_cells] {
             set ip_name [hsi::get_property HIER_NAME [hsi::get_cells $cell]]
             set unit_addr [string range $base 2 99]
             set comp_node [hsi::create_dt_node -name $ip_name -label $ip_name -unit_addr $unit_addr -object $bus_node]
-            hsi::utils::add_new_dts_param $comp_node "compatible" "generic-uio" string
-            hsi::utils::add_new_dts_param $comp_node "reg" "$reg" intlist
+            hsi_utils_add_new_dts_param $comp_node "compatible" "generic-uio" string
+            hsi_utils_add_new_dts_param $comp_node "reg" "$reg" intlist
 
             # add interrupts (if they were detected before)
             if {[dict exists $pl_ps_irq_ips $comp_name]} {
@@ -140,9 +157,9 @@ foreach cell [hsi::get_cells] {
                 set irq_name [dict get $pl_ps_irq_names $comp_name]
                 set irq_idx [expr {$irq_offs + 89}]
 
-                hsi::utils::add_new_dts_param $comp_node "interrupt-names" "$irq_name" string
-                hsi::utils::add_new_dts_param $comp_node "interrupt-parent" "<&gic>" string
-                hsi::utils::add_new_dts_param $comp_node "interrupts" "0 $irq_idx 4" intlist
+                hsi_utils_add_new_dts_param $comp_node "interrupt-names" "$irq_name" string
+                hsi_utils_add_new_dts_param $comp_node "interrupt-parent" "<&gic>" string
+                hsi_utils_add_new_dts_param $comp_node "interrupts" "0 $irq_idx 4" intlist
 
             }
         }

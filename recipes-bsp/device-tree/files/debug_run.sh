@@ -3,9 +3,9 @@
 # Copyright (c) 2021 Deutsches Elektronen-Synchrotron DESY
 
 
-XSCT=../../../../../build/xsct/Vitis/2020.1/bin/xsct
+XSCT=../../../../../build/xsct/Vitis/2020.2/bin/xsct
 
-XSCT_DIR=../../../../../build/xsct/Vitis/2020.1/
+XSCT_DIR=../../../../../build/xsct/Vitis/2020.2/
 WORKDIR=work
 HDF_OR_XSA_PATH=../../../recipes-demo/hdf/damc-fmc2zup/damc_fmc2zup_top.xsa
 
