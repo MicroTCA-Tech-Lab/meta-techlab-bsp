@@ -1,37 +1,27 @@
 DESCRIPTION = "AXI DMA demo"
 LICENSE = "CLOSED"
-PV = "0.1"
+PV = "0.8.0"
 PR = "r0"
 
 DEPENDS = "boost"
-RDEPENDS_${PN} = "boost-log"
+RDEPENDS_${PN} = "boost-log boost-program-options"
 
 inherit pkgconfig cmake
 
 SRC_URI = " \
-	file://CMakeLists.txt \
-	file://inc/AxiTrafficGenLfsr.hpp \
-	file://inc/DataHandlerAbstract.hpp \
-	file://inc/DataHandlerPrint.hpp \
-	file://inc/UDmaBuf.hpp \
-	file://inc/UioAxiDmaIf.hpp \
-	file://inc/UioIfFactory.hpp \
-	file://inc/UioIf.hpp \
-	file://inc/UioMemSgdma.hpp \
-	file://inc/UioTrafficGen.hpp \
-	file://src/axi_dma_demo.cpp \
-	file://src/DataHandlerAbstract.cpp \
-	file://src/DataHandlerPrint.cpp \
-	file://src/UDmaBuf.cpp \
-	file://src/UioAxiDmaIf.cpp \
-	file://src/UioMemSgdma.cpp \
-	file://src/UioTrafficGen.cpp \
+    file://zup-axi-dma-demo_v${PV}.tar.gz \
 "
+
+EXTRA_OECMAKE += "-DCMAKE_SKIP_RPATH=TRUE"
 
 S="${WORKDIR}"
 
 do_install() {
+    # library
+    install -m 0755 -d ${D}${libdir}
+    oe_libinstall -C ${S}/build -so libudmaio ${D}${libdir}
+
+    # example
     install -d ${D}${bindir}
     install -m 0755 axi_dma_demo ${D}${bindir}
 }
-
