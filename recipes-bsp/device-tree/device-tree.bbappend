@@ -18,7 +18,12 @@ do_configure_append_damc-fmc2zup() {
     # append PS config to the main file
     echo '#include "system-user.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
 
-    # append PL-related things to the overlay
-    echo '/include/ "pl-conf.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
-    echo '/include/ "zup_app.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
+    if [ ${FPGA_MNGR_RECONFIG_ENABLE} = "1" ]; then
+        # append PL-related things to the overlay
+        echo '/include/ "pl-conf.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
+        echo '/include/ "zup_app.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
+    else
+        # append PL-related things to the main file
+        echo '#include "zup_app.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
+    fi
 }
