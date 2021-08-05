@@ -1,8 +1,9 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI += " \
-	file://system-user.dtsi \
-	file://gen_app_amba_dts.tcl \
+    file://system-user.dtsi \
+    file://pl-conf.dtsi \
+    file://gen_app_amba_dts.tcl \
 "
 
 do_configure_append_damc-fmc2zup() {
@@ -14,7 +15,10 @@ do_configure_append_damc-fmc2zup() {
     eval xsct -sdx -nodisp -eval 'source ${WORKDIR}/gen_app_amba_dts.tcl ${XSCT_DIR} ${WORKDIR} ${XSCTH_HDF}'
     cp dts_app/zup_app.dts ${DT_FILES_PATH}/zup_app.dtsi
 
-    # append aux dts files (BSP, app PL) to the main dts
+    # append PS config to the main file
     echo '#include "system-user.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
-    echo '#include "zup_app.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
+
+    # append PL-related things to the overlay
+    echo '/include/ "pl-conf.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
+    echo '/include/ "zup_app.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
 }
