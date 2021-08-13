@@ -51,6 +51,11 @@ else
     echo "$SCRIPT_NAME: gpio dir already exist, skipping export"
 fi;
 
+#===============================================================================
+# set direction
+
+echo "$SCRIPT_NAME: setting direction to 'out'"
+echo out > ${gpio_dir}/direction
 
 #===============================================================================
 # drive GPIO to '0' for 1s, then leave it at '1'
