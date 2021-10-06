@@ -1,0 +1,5 @@
+
+&ddr4_ddr4_0 {
+    compatible = "generic-uio";
+};
+
