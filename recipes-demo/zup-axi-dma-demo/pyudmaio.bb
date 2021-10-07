@@ -1,6 +1,6 @@
 DESCRIPTION = "AXI DMA demo"
 LICENSE = "CLOSED"
-PV = "0.8.7"
+PV = "0.8.9"
 PR = "r0"
 
 # pybind11 should be version 2.6 or higher
