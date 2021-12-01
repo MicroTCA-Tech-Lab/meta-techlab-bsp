@@ -4,7 +4,7 @@ require ./recipes-core/images/petalinux-image-full.bb
 
 require zup-common.inc
 
-IMAGE_FSTYPES_remove = "cpio.gz cpio cpio.gz.u-boot cpio.bz2 ext3 ext4 wic.qemu-sd"
+IMAGE_FSTYPES_remove = "cpio.gz cpio cpio.gz.u-boot cpio.bz2 ext3 ext4 wic.qemu-sd jffs2"
 
 EXTRA_IMAGE_FEATURES += " package-management "
 
