@@ -1,7 +1,7 @@
 DESCRIPTION = "Clock monitor"
 LICENSE = "CLOSED"
-PV = "1.0"
-PR = "r1"
+PV = "2.0"
+PR = "r0"
 
 SRC_URI = "file://clock-monitor.py file://HwAccessAarch64.py"
 

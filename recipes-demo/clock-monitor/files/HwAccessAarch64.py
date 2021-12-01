@@ -4,47 +4,38 @@ import logging
 import mmap
 import os
 import struct
-import subprocess
 
-class HwAccessAarch64(object):
-
-  def __init__(self):
-    self.logger = logging.getLogger(self.__class__.__name__)
-
-    user_filename = "/dev/mem"
-    self.fd_user = os.open(user_filename, os.O_RDWR)
-    self.mem = mmap.mmap(self.fd_user, 256 * 1024 * 1024, offset=0x80000000)
-    self.logger.debug("Opened %s, fd = %d", user_filename, self.fd_user)
+ZYNQMP_AXI_FPD_PL_OFFSET = 0xA0000000
+ZYNQMP_AXI_FPD_PL_SIZE = 256 * 1024 * 1024
 
 
-  def __close__(self):
-    self.mem.close()
-    os.close(self.fd_user)
+class HwAccessAarch64:
+    def __init__(
+        self, mem_offset=ZYNQMP_AXI_FPD_PL_OFFSET, mem_size=ZYNQMP_AXI_FPD_PL_SIZE
+    ):
+        self.logger = logging.getLogger(self.__class__.__name__)
 
-  def rd32(self, addr):
-    addr_w_o = addr
-    bs = self.mem[addr_w_o:addr_w_o + 4]
-    return struct.unpack("I", bs)[0]
+        user_filename = "/dev/mem"
+        self.mem_offset = mem_offset
+        self.mem_size = mem_size
+        self.fd_user = os.open(user_filename, os.O_RDWR)
+        self.mem = mmap.mmap(self.fd_user, self.mem_size, offset=self.mem_offset)
+        self.logger.debug("Opened %s, fd = %d", user_filename, self.fd_user)
 
-  def wr32(self, addr, data):
-    bs = struct.pack("I", int(data))
-    addr_w_o = addr
-    self.mem[addr_w_o:addr_w_o + 4] = bs
+    def __close__(self):
+        self.mem.close()
+        os.close(self.fd_user)
 
-  def rd_bytes(self, addr, length):
-    bs = b""
-    for i in range(0, length//4):
-      addr_w_o = addr + 4*i
-      b = self.mem[addr_w_o:addr_w_o + 4]
-      bs += b
-    return bs[0:length]
+    def rd32(self, addr):
+        self.logger.debug("read: addr = %#010x ...", addr)
+        addr -= self.mem_offset
+        bs = self.mem[addr : addr + 4]
+        data = struct.unpack("I", bs)[0]
+        self.logger.debug("read: ... data = %#010x", data)
+        return data
 
-def main():
-  hw = HwAccessAarch64()
-  print("ID reg: {0:08x}".format(hw.rd32(0x0)))
-  print("version: {0:08x}".format(hw.rd32(0x4)))
-
-if __name__ == "__main__":
-  main()
-
-
+    def wr32(self, addr, data):
+        self.logger.debug("write: addr = %#010x, data = %#010X", addr, data)
+        addr -= self.mem_offset
+        bs = struct.pack("I", int(data))
+        self.mem[addr : addr + 4] = bs
