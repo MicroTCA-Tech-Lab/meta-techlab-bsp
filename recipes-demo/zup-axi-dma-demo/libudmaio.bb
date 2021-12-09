@@ -1,6 +1,6 @@
 DESCRIPTION = "Userspace DMA I/O library"
 LICENSE = "CLOSED"
-PV = "0.8.9"
+PV = "0.9.1"
 PR = "r0"
 
 DEPENDS = "boost"
