@@ -26,7 +26,7 @@ index 51c7e4e69ba6..74ff3a09ee36 100644
 +	/* set the name of the controller */
 +	if (!of_property_read_string(pdev->dev.of_node, "name", &of_name)) {
 +		snprintf(i2c->adap.name, sizeof(i2c->adap.name),
-+					DRIVER_NAME " - " "%s", of_name);
++					DRIVER_NAME " [%s]", of_name);
 +	} else {
 +		dev_warn(&pdev->dev, "could not find the name in the DT, "
 +				"using the default value\n");
