@@ -15,8 +15,8 @@ class ZupPortName(enum.IntEnum):
     Z3_RTM_CLK1 = 7
     TCLKA = 8
     TCLKB = 9
-    TCLKC = 10
-    TCLKD = 11
+    TCLKC = 11
+    TCLKD = 10
     WR_PLL3 = 12
     FMC2_CLK3_BIDIR = 13
     FMC2_CLK2_BIDIR = 14
