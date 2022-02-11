@@ -22,14 +22,18 @@ do_configure_append_damc-fmc2zup() {
         echo '/include/ "pl-conf.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
         if [ ${DT_FROM_BD_ENABLE} = "1" ]; then
             echo '/include/ "zup_app.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
-            echo '/include/ "zup-app-i2c.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
+            if [ ${ZUP_DEVICE_TREE_FOR_PL_I2C} = "1" ]; then
+                echo '/include/ "zup-app-i2c.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
+            fi
         fi
     else
         # append PL-related things to the main file
         echo '#include "pl-conf.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
         if [ ${DT_FROM_BD_ENABLE} = "1" ]; then
             echo '#include "zup_app.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
-            echo '#include "zup-app-i2c.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
+            if [ ${ZUP_DEVICE_TREE_FOR_PL_I2C} = "1" ]; then
+                echo '#include "zup-app-i2c.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
+            fi
         fi
     fi
 }
