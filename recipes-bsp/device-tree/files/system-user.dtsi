@@ -111,6 +111,31 @@
         spi-tx-bus-width = <4>;
         spi-rx-bus-width = <4>;
         spi-max-frequency = <4500000>;
+        partitions {
+            compatible = "fixed-partitions";
+            #address-cells = <1>;
+            #size-cells = <1>;
+            bootbin@0 {
+                /* 2M for FSBL + Uboot */
+                reg = <0x00000000 0x00200000>;
+            };
+            env@200000 {
+                /* 256k for Uboot env */
+                reg = <0x00200000 0x00040000>;
+            };
+            dts@240000 {
+                /* 256k for device tree */
+                reg = <0x00240000 0x00040000>;
+            };
+            image@280000 {
+                /* 32M for kernel */
+                reg = <0x00280000 0x02000000>;
+            };
+            recovery@2280000 {
+                /* 93.5M remaining for recovery-rootfs */
+                reg = <0x02280000 0x05D80000>;
+            };
+        };
     };
 };
 
