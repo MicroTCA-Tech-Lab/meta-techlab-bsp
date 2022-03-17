@@ -1,0 +1,119 @@
+From bbaa3e0810d1a83fa107968ac3d2e6f2dd489a03 Mon Sep 17 00:00:00 2001
+From: Patrick Huesmann <patrick.huesmann@desy.de>
+Date: Thu, 17 Mar 2022 12:45:39 +0100
+Subject: [PATCH] Flash Write Enable Latch workaround
+
+---
+ drivers/mtd/spi/spi-nor-core.c | 40 +++++++++++++++++++++++++++++++---
+ drivers/spi/zynqmp_gqspi.c     |  9 ++++++++
+ 2 files changed, 46 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mtd/spi/spi-nor-core.c b/drivers/mtd/spi/spi-nor-core.c
+index 48cf25216d..fd0c6fb745 100644
+--- a/drivers/mtd/spi/spi-nor-core.c
++++ b/drivers/mtd/spi/spi-nor-core.c
+@@ -56,7 +56,13 @@ static int spi_nor_read_reg(struct spi_nor *nor, u8 code, u8 *val, int len)
+ 	if (ret < 0)
+ 		dev_dbg(&flash->spimem->spi->dev, "error %d reading %x\n", ret,
+ 			code);
+-
++#ifdef SPIFLASH_DEBUG
++	printf("read_reg %02x: ", code);
++	for (int i = 0; i < len; i++) {
++		printf("%02x ", val[i]);
++	}
++	printf("\r\n");
++#endif
+ 	return ret;
+ }
+ 
+@@ -67,6 +73,13 @@ static int spi_nor_write_reg(struct spi_nor *nor, u8 opcode, u8 *buf, int len)
+ 					  SPI_MEM_OP_NO_DUMMY,
+ 					  SPI_MEM_OP_DATA_OUT(len, NULL, 1));
+ 
++#ifdef SPIFLASH_DEBUG
++	printf("write_reg %02x: ", opcode);
++	for (int i = 0; i < len; i++) {
++		printf("%02x ", buf[i]);
++	}
++	printf("\r\n");
++#endif
+ 	return spi_nor_read_write_reg(nor, &op, buf);
+ }
+ 
+@@ -162,6 +175,9 @@ static int read_sr(struct spi_nor *nor)
+ 			return ret;
+ 		}
+ 	}
++#ifdef SPIFLASH_DEBUG	
++	printf("read_sr %02x\r\n", val[0]);
++#endif
+ 
+ 	return val[0];
+ }
+@@ -190,7 +206,9 @@ static int read_fsr(struct spi_nor *nor)
+ 			return ret;
+ 		}
+ 	}
+-
++#ifdef SPIFLASH_DEBUG	
++	printf("read_fsr %02x\r\n", val[0]);
++#endif
+ 	return val[0];
+ }
+ 
+@@ -231,7 +249,23 @@ static int write_sr(struct spi_nor *nor, u8 val)
+  */
+ static int write_enable(struct spi_nor *nor)
+ {
+-	return nor->write_reg(nor, SPINOR_OP_WREN, NULL, 0);
++	int result = nor->write_reg(nor, SPINOR_OP_WREN, NULL, 0);
++	if (result < 0) {
++		return result;
++	}
++
++	// Verify Write Enable Latch assertion in status register
++	unsigned long timebase = get_timer(0);
++	while (get_timer(timebase) < HZ) {
++		int status = read_sr(nor);
++		if (status & SR_WEL) {
++			return 0;
++		}
++	}
++
++	dev_err(nor->dev, "Timeout while waiting for write enable latch\n");
++
++	return -ETIMEDOUT;
+ }
+ 
+ /*
+diff --git a/drivers/spi/zynqmp_gqspi.c b/drivers/spi/zynqmp_gqspi.c
+index c7b5c6d21d..ebe97402b9 100644
+--- a/drivers/spi/zynqmp_gqspi.c
++++ b/drivers/spi/zynqmp_gqspi.c
+@@ -317,6 +317,14 @@ static void zynqmp_qspi_chipselect(struct zynqmp_qspi_priv *priv, int is_on)
+ {
+ 	u32 gqspi_fifo_reg = 0;
+ 
++	// This workaround is required to make the write enable command work.
++	// See MT25QU01 datasheet p.53:
++	// "If S# is not driven HIGH after the command code has been latched in, the
++	// command is not executed, flag status register error bits are not set, and
++	// the write enable latch remains cleared to its default setting of 0"
++	// Perhaps the chipselect delay introduced by MMC STAMP CPLD plays a role here,
++	// it is still to be investigated.
++	udelay(5);
+ 	if (is_on) {
+ 		gqspi_fifo_reg = zynqmp_qspi_bus_select(priv);
+ 		gqspi_fifo_reg |= GQSPI_SPI_MODE_SPI |
+@@ -338,6 +346,7 @@ static void zynqmp_qspi_chipselect(struct zynqmp_qspi_priv *priv, int is_on)
+ 	zynqmp_qspi_fill_gen_fifo(priv, 0);
+ 
+ 	zynqmp_qspi_fill_gen_fifo(priv, gqspi_fifo_reg);
++	udelay(5);
+ }
+ 
+ void zynqmp_qspi_set_tapdelay(struct udevice *bus, u32 baudrateval)
+-- 
+2.25.1
+
