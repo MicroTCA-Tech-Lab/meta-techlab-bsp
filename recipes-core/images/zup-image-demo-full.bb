@@ -1,22 +1,16 @@
-DESCRIPTION = "Demo for DAMC-FMC2ZUP"
+DESCRIPTION = "DAMC-FMC2ZUP Full Linux Image"
+
+IMAGE_AUTOLOGIN = "0"
 
 require ./recipes-core/images/petalinux-image-full.bb
 
 require zup-common.inc
 
-IMAGE_FSTYPES_remove = "cpio.gz cpio cpio.gz.u-boot cpio.bz2 ext3 ext4 wic.qemu-sd jffs2"
+IMAGE_INSTALL_append = " packagegroup-techlab-devbox"
+IMAGE_INSTALL_append = " packagegroup-locale-support"
+IMAGE_INSTALL_append = " packagegroup-recovery-support"
 
-EXTRA_IMAGE_FEATURES += " package-management "
+inherit extrausers
+EXTRA_USERS_PARAMS = "usermod -s /bin/zsh root"
 
 IMAGE_FEATURES_remove = " petalinux-vitisai petalinux-openamp"
-
-IMAGE_INSTALL_append = " htop"
-IMAGE_INSTALL_append = " nano"
-IMAGE_INSTALL_append = " python3"
-IMAGE_INSTALL_append = " vim"
-IMAGE_INSTALL_append = " udmabuf"
-IMAGE_INSTALL_append = " zup-axi-dma-demo"
-IMAGE_INSTALL_append = " pyudmaio"
-IMAGE_INSTALL_append = " clock-monitor"
-IMAGE_INSTALL_append = " irq-handler-demo"
-IMAGE_INSTALL_append = " lsuio"
