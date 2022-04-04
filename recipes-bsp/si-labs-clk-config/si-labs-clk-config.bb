@@ -19,7 +19,7 @@ SRC_URI = " \
     file://si-labs-clk-init.sh \
 "
 
-RDEPENDS_${PN} = "python python3-smbus i2c-bus-locator"
+RDEPENDS_${PN} = "python3 python3-smbus i2c-bus-locator"
 
 inherit setuptools3
 
