@@ -8,26 +8,9 @@ IMAGE_INSTALL_append = " nano"
 IMAGE_INSTALL_append = " python3"
 IMAGE_INSTALL_append = " vim"
 
-# Generic Linux HW interface tools
-IMAGE_INSTALL_append = " ethtool"
-IMAGE_INSTALL_append = " i2c-tools"
-IMAGE_INSTALL_append = " phytool"
-
-# TechLab tools
-IMAGE_INSTALL_append = " udmabuf"
-IMAGE_INSTALL_append = " pyudmaio"
-IMAGE_INSTALL_append = " lsuio"
-
-# ZUP specific recipes
-IMAGE_INSTALL_append = " si-labs-clk-config"
-IMAGE_INSTALL_append = " fw-plreset"
-IMAGE_INSTALL_append = " idt-cps-config"
-IMAGE_INSTALL_append = " uio-users-group uio-users-udev-rule"
-
-# ZUP demos
-IMAGE_INSTALL_append = " zup-axi-dma-demo"
-IMAGE_INSTALL_append = " clock-monitor"
-IMAGE_INSTALL_append = " irq-handler-demo"
+IMAGE_INSTALL_append = " packagegroup-hwtools"
+IMAGE_INSTALL_append = " packagegroup-zup-support"
+IMAGE_INSTALL_append = " packagegroup-zup-demo"
 
 # install if fpga-manager is enabled
 IMAGE_INSTALL_append = " ${@'fpgautil-init' if d.getVar('FPGA_MNGR_RECONFIG_ENABLE') == '1' else ''}"
