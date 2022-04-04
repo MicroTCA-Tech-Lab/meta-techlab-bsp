@@ -1,1 +1,0 @@
-SUBSYSTEM=="uio", GROUP="uio_users", MODE="0660"
