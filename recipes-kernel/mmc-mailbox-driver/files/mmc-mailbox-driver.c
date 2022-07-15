@@ -322,6 +322,28 @@ static int at24_write(void* priv, unsigned int off, void* val, size_t count)
     return 0;
 }
 
+static struct at24_data* mmc_mb_pwroff_inst = NULL;
+
+static void mmc_mailbox_do_poweroff(void)
+{
+#define MB_FPGA_STATUS_OFFS 2046
+#define MB_FPGA_STATUS_SHDN_FINISHED BIT(2)
+
+    uint8_t stat = MB_FPGA_STATUS_SHDN_FINISHED;
+
+    if (!mmc_mb_pwroff_inst) {
+        dev_err(&mmc_mb_pwroff_inst->client->dev, "no mailbox instance available\n");
+        return;
+    }
+
+    dev_info(&mmc_mb_pwroff_inst->client->dev, "Sending SHDN_FINISHED to MMC\n");
+    //    at24_write(mmc_mb_pwroff_inst, MB_FPGA_STATUS_OFFS, &stat, sizeof(stat));
+    regmap_bulk_write(mmc_mb_pwroff_inst->regmap, MB_FPGA_STATUS_OFFS, &stat, sizeof(stat));
+    mdelay(1000);
+
+    WARN_ON(1);
+}
+
 static const struct at24_chip_data* at24_get_chip_data(struct device* dev)
 {
     struct device_node* of_node = dev->of_node;
@@ -450,6 +472,14 @@ static int mmc_mailbox_probe(struct i2c_client* client)
              client->name,
              mmc_mailbox->write_max);
 
+    /* If a pm_power_off function has already been added, leave it alone */
+    if (pm_power_off != NULL) {
+        dev_err(dev, "pm_power_off function already registered\n");
+        return 0;
+    }
+    mmc_mb_pwroff_inst = mmc_mailbox;
+    pm_power_off = &mmc_mailbox_do_poweroff;
+
     return 0;
 }
 
@@ -457,6 +487,10 @@ static int mmc_mailbox_remove(struct i2c_client* client)
 {
     pm_runtime_disable(&client->dev);
     pm_runtime_set_suspended(&client->dev);
+
+    if (pm_power_off == &mmc_mailbox_do_poweroff) {
+        pm_power_off = NULL;
+    }
 
     return 0;
 }

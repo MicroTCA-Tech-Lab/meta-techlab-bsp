@@ -1,0 +1,3 @@
+echo "mmcctrld: Starting..."
+
+/usr/sbin/mmcctrld

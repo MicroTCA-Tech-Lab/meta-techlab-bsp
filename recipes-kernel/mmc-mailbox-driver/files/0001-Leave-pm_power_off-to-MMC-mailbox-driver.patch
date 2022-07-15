@@ -1,0 +1,25 @@
+From f98f2acf30673eef3e0187b34084a660745d4c62 Mon Sep 17 00:00:00 2001
+From: Patrick Huesmann <patrick.huesmann@desy.de>
+Date: Mon, 18 Jul 2022 14:44:42 +0200
+Subject: [PATCH] Leave pm_power_off to MMC mailbox driver
+
+---
+ drivers/firmware/psci/psci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+index 84f4ff351c62..b7cbad3b85fd 100644
+--- a/drivers/firmware/psci/psci.c
++++ b/drivers/firmware/psci/psci.c
+@@ -433,7 +433,7 @@ static void __init psci_0_2_set_functions(void)
+ 
+ 	arm_pm_restart = psci_sys_reset;
+ 
+-	pm_power_off = psci_sys_poweroff;
++//	pm_power_off = psci_sys_poweroff;
+ }
+ 
+ /*
+-- 
+2.25.1
+
