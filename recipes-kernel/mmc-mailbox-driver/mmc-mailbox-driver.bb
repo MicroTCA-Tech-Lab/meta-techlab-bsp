@@ -15,6 +15,8 @@ inherit module
 # https://lists.yoctoproject.org/pipermail/meta-intel/2018-September/005546.html
 DEPENDS += "xz-native bc-native bison-native"
 
+RDEPENDS_${PN} = "i2c-xiic-atomic"
+
 RPROVIDES_${PN} += "kernel-module-mmc-mailbox-driver"
 KERNEL_MODULE_AUTOLOAD += " mmc-mailbox-driver"
 KERNEL_MODULE_PROBECONF += " mmc-mailbox-driver"
