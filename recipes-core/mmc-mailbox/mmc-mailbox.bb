@@ -2,23 +2,21 @@ DESCRIPTION = "DMMC-STAMP Mailbox tools"
 LICENSE = "CLOSED"
 PV = "0.0.1"
 
-RDEPENDS_${PN} = "mmc-mailbox-driver"
+SRCREV = "e782d1009a5a4e3fb3fb194d9e10e41daa7af5ad"
+SRC_URI = "git://git@msktechvcs.desy.de/huesmann/mmc-mailbox.git;protocol=ssh"
 
-SRC_URI = "\
-  file://CMakeLists.txt \
-  file://mmcmb/fpga_mailbox_layout.h \
-  file://mmcmb/mmcmb.h \
-  file://mmcctrld.c \
-  file://mmcinfo.c \
-  file://mmcmb.c \
+SRC_URI += "\
   file://init.d/mmcctrld \
 "
-S = "${WORKDIR}"
+
+RDEPENDS_${PN} = "mmc-mailbox-driver"
+
+S = "${WORKDIR}/git"
 
 inherit cmake
 
 # MMC mailbox location on ZUP
-EXTRA_OECMAKE += "-DMAILBOX_FILE=/sys/bus/i2c/devices/5-002a/eeprom"
+EXTRA_OECMAKE += "-DADAPTER_DT_NAME=iic_axi_iic_mmc -DI2C_ADDR=002a"
 
 do_install_append() {
   install -d ${D}${sysconfdir}/init.d
