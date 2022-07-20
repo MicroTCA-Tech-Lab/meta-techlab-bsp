@@ -1,14 +1,13 @@
-DESCRIPTION = "mmc-mailbox driver"
-LICENSE = "GPL"
-PV = "0.0.1"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=afcc69d729fbf1d0a2af28ce44a23991" 
+DESCRIPTION = "Driver for DMMC-STAMP mailbox"
+LICENSE = "GPLv2"
+PV = "1.0.0"
 
-SRC_URI = "\
-  file://mmc-mailbox-driver.c \
-  file://Makefile \
-  file://LICENSE \
-"
-S = "${WORKDIR}"
+SRC_URI = "git://github.com/MicroTCA-Tech-Lab/mmc-mailbox-driver.git;protocol=https"
+SRCREV = "e67c5a490d484b732fa492ae770d0af0b3c331df"
+
+LIC_FILES_CHKSUM = "file://LICENSE;md5=7a5937f875a881b71ac02f9d0947fa61" 
+
+S = "${WORKDIR}/git"
 
 inherit module
 
