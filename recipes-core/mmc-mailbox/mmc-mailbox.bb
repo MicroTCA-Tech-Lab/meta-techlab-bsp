@@ -2,7 +2,7 @@ DESCRIPTION = "DMMC-STAMP Mailbox tools"
 LICENSE = "CLOSED"
 PV = "0.0.1"
 
-SRCREV = "a46be18e8cd85ecf3990c3c97d0c2f49c81ed32e"
+SRCREV = "507a17f57e14f0e2bc3ba2bc1657343f9ca872be"
 SRC_URI = "git://git@msktechvcs.desy.de/huesmann/mmc-mailbox.git;protocol=ssh"
 
 SRC_URI += "\
