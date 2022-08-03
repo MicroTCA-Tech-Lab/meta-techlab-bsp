@@ -53,31 +53,6 @@ between the two variants in `conf/local.conf`.
 `ZUP_FPGA_VARIANT` should be set to either `"zu11eg"` or `"zu19eg"`. By
 default, `"zu11eg"` is used.
 
-### Device Tree entries for the I2C controllers in the Programmable Logic
-
-On the DAMC-FMC2ZUP there are three I2C buses connected to the Programmable
-Logic: White Rabbit bus, DS28C36 bus and front panel bus. To manage those
-I2C buses the example design contains three Xilinx IIC controllers:
-
-  * `iic_axi_iic_ds28c36`
-  * `iic_axi_iic_fplink`
-  * `iic_axi_iic_wr`
-
-If the device tree is generated from the application block diagram (when
-the `DT_FROM_BD_ENABLE` option is enabled) the device tree entries for
-those controllers are declared to be compatible with `"generic-uio"`.
-
-To make those IIC controllers use the Xilinx IIC driver, an option
-called `ZUP_DEVICE_TREE_FOR_PL_I2C` is provided. This option enables
-the inclusion of an additional device tree file which overrides the
-`compatible` value for the three IIC controllers.
-
-To use this function, add the following line to `conf/local.conf`:
-
-```
-ZUP_DEVICE_TREE_FOR_PL_I2C = "1"
-```
-
 ## Demo
 
 This Yocto layer provides also a small demo, which includes an FPGA
