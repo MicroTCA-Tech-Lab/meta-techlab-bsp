@@ -1,9 +1,10 @@
-DESCRIPTION = "DMMC-STAMP Mailbox tools"
-LICENSE = "CLOSED"
+DESCRIPTION = "DMMC-STAMP Mailbox support"
+LICENSE = "BSD"
 PV = "0.0.1"
 
-SRCREV = "507a17f57e14f0e2bc3ba2bc1657343f9ca872be"
-SRC_URI = "git://git@msktechvcs.desy.de/huesmann/mmc-mailbox.git;protocol=ssh"
+SRCREV = "d44baf97936d0c982e952e15946048a7e34af518"
+SRC_URI = "git://git@github.com/MicroTCA-Tech-Lab/mmc-mailbox.git;protocol=ssh"
+LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=750d848625d8174091b953f2de0e8f8e"
 
 SRC_URI += "\
   file://init.d/mmcctrld \
@@ -18,9 +19,6 @@ INITSCRIPT_NAME = "mmcctrld"
 INITSCRIPT_PARAMS = "defaults 90"
 
 inherit cmake update-rc.d
-
-# MMC mailbox location on ZUP
-EXTRA_OECMAKE += "-DADAPTER_DT_NAME=iic_axi_iic_mmc -DI2C_ADDR=002a"
 
 do_install_append() {
   install -d ${D}${sysconfdir}/init.d
