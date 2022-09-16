@@ -3,7 +3,7 @@ LICENSE = "CLOSED"
 PV = "1.3"
 PR = "r0"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS_prepend_damc-fmc2zup := "${THISDIR}/files/fmc2zup:"
 
 S = "${WORKDIR}"
 

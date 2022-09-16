@@ -16,5 +16,5 @@ S = "${WORKDIR}"
 ZUP_FPGA_VARIANT ?= "zu11eg"
 
 
-FILESEXTRAPATHS_prepend_damc-fmc2zup := "${THISDIR}/${ZUP_FPGA_VARIANT}:"
+FILESEXTRAPATHS_prepend_damc-fmc2zup := "${THISDIR}/fmc2zup/${ZUP_FPGA_VARIANT}:"
 

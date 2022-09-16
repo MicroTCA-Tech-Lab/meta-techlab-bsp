@@ -9,7 +9,7 @@ RDEPENDS_${PN} = "python3"
 
 FILES_${PN} = "/opt/mtca-tech-lab/damc-fmc2zup/clock-monitor/"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS_prepend_damc-fmc2zup := "${THISDIR}/files/fmc2zup:"
 
 do_install() {
     install -d ${D}/opt

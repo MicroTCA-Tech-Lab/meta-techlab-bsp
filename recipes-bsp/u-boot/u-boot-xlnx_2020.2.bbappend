@@ -1,5 +1,5 @@
+FILESEXTRAPATHS_prepend_damc-fmc2zup := "${THISDIR}/files/fmc2zup:"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI_append = " \
 	file://mac-addr.cfg \
 	file://env.cfg \

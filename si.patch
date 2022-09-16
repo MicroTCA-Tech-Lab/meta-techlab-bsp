@@ -1,0 +1,238 @@
+diff --color -urN -x '*.txt' recipes-demo/clock-monitor/clock-monitor.bb /home/huesmann/src/yocto/z7io/sources/meta-damc-fmc1z7io/recipes-demo/clock-monitor/clock-monitor.bb
+--- recipes-demo/clock-monitor/clock-monitor.bb	2022-09-16 10:04:28.903947236 +0200
++++ /home/huesmann/src/yocto/z7io/sources/meta-damc-fmc1z7io/recipes-demo/clock-monitor/clock-monitor.bb	2022-03-27 22:15:40.844170442 +0200
+@@ -3,17 +3,22 @@
+ PV = "2.0"
+ PR = "r0"
+ 
+-SRC_URI = "file://clock-monitor.py file://HwAccessAarch64.py"
++FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+ 
+-RDEPENDS_${PN} = "python3"
++S = "${WORKDIR}"
+ 
+-FILES_${PN} = "/opt/mtca-tech-lab/damc-fmc2zup/clock-monitor/"
++SRC_URI = " \
++    file://clock-monitor.py \
++    file://HwAccessAarch32.py \
++"
+ 
+-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
++RDEPENDS_${PN} = "python3"
++
++FILES_${PN} += "/opt/mtca-tech-lab/damc-fmc1z7io/clock-monitor/"
+ 
+ do_install() {
+     install -d ${D}/opt
+-    install -d ${D}/opt/mtca-tech-lab/damc-fmc2zup/clock-monitor/
+-    cp -r ${WORKDIR}/clock-monitor.py ${D}/opt/mtca-tech-lab/damc-fmc2zup/clock-monitor/
+-    cp -r ${WORKDIR}/HwAccessAarch64.py ${D}/opt/mtca-tech-lab/damc-fmc2zup/clock-monitor/
++    install -d ${D}/opt/mtca-tech-lab/damc-fmc1z7io/clock-monitor/
++    cp -r ${WORKDIR}/clock-monitor.py ${D}/opt/mtca-tech-lab/damc-fmc1z7io/clock-monitor/
++    cp -r ${WORKDIR}/HwAccessAarch32.py ${D}/opt/mtca-tech-lab/damc-fmc1z7io/clock-monitor/
+ }
+diff --color -urN -x '*.txt' recipes-demo/clock-monitor/files/clock-monitor.py /home/huesmann/src/yocto/z7io/sources/meta-damc-fmc1z7io/recipes-demo/clock-monitor/files/clock-monitor.py
+--- recipes-demo/clock-monitor/files/clock-monitor.py	2022-09-16 10:04:28.903947236 +0200
++++ /home/huesmann/src/yocto/z7io/sources/meta-damc-fmc1z7io/recipes-demo/clock-monitor/files/clock-monitor.py	2022-03-27 22:15:40.844170442 +0200
+@@ -3,30 +3,24 @@
+ import argparse
+ import logging
+ 
+-from HwAccessAarch64 import HwAccessAarch64
++from HwAccessAarch32 import HwAccessAarch32
+ 
+-ZUP_EXAMPLE_CLK_NAMES = {
+-    0: "PCIe",
+-    1: "CPS GC1",
+-    2: "CPS GC2",
+-    3: "PS PLL",
+-    4: "FMC1 CLK0",
+-    5: "FMC1 CLK1",
+-    6: "FMC2 CLK0",
+-    7: "FMC2 CLK1",
+-    8: "FMC1 REF",
+-    9: "WR PLL1",
+-    10: "fixed 100",
+-    11: "DDR4 clk",
+-    12: "LLL GT clk",
+-    13: "FMC1 GBT CLK0",
+-    14: "FMC1 GBT CLK1",
++Z7IO_EXAMPLE_CLK_NAMES = {
++    0:  "PCIe           (pcie_clk)      ",
++    1:  "PS PLL CLK0    (arm_clk_100)   ",
++    2:  "PS PLL CLK1    (arm_clk_200)   ",
++    3:  "OSC 200        (PL_CLK)        ",
++    4:  "MAIN PLL CLK1  (CLK_BANK33)    ",
++    5:  "MAIN PLL CLK2  (LVDS_CLK)      ",
++    6:  "MGT PLL CLK1   (MGTCLK0)       ",
++    7:  "RTM PLL CLK1   (CLK_BANK35)    ",
++    8:  "FMC GBT CLK0   (FMC2_CLK0_M2C) ",
++    9:  "FMC GBT CLK1   (FMC2_CLK1_M2C) ",
++    10: "EXT CLK        (Frontpanel)    ",
+ }
+ 
+-ZUP_EXAMPLE_CLK_NAMES_LEN = max(map(len, ZUP_EXAMPLE_CLK_NAMES.values()))
+-
+-ZUP_EXAMPLE_CLK_MON_ADDR = 0xA0060000
+-
++Z7IO_EXAMPLE_CLK_NAMES_LEN = max(map(len, Z7IO_EXAMPLE_CLK_NAMES.values()))
++Z7IO_EXAMPLE_CLK_MON_ADDR = 0x00060000
+ 
+ class ClockMonitor:
+ 
+@@ -35,7 +29,7 @@
+     ADDR_CLK_FREQS = 0x10
+ 
+     ID_REG_EXPECT = 0xC10CC302
+-    CLK_FREQ_MAX_COUNT = 16
++    CLK_FREQ_NR = len(Z7IO_EXAMPLE_CLK_NAMES)
+     INVALID_REG = 0xDEADBEEF
+ 
+     def __init__(self, hw, offs):
+@@ -51,19 +45,19 @@
+         return id_reg, version
+ 
+     def print_clocks(self):
+-        for i in range(self.CLK_FREQ_MAX_COUNT):
+-            clk_freq_hz = self.hw.rd32(self.offs + self.ADDR_CLK_FREQS + 4 * i)
++        for i in range(self.CLK_FREQ_NR):
++            clk_freq_hz = self.hw.rd32(self.offs + self.ADDR_CLK_FREQS + 4*i)
+             if clk_freq_hz == self.INVALID_REG:
+                 break
+ 
+             clk_freq_mhz = clk_freq_hz / 1e6
+             try:
+-                clk_name = ZUP_EXAMPLE_CLK_NAMES[i]
++                clk_name = Z7IO_EXAMPLE_CLK_NAMES[i]
+             except KeyError:
+                 clk_name = "unknown"
+ 
+-            clk_name = clk_name.ljust(ZUP_EXAMPLE_CLK_NAMES_LEN)
+-            print(f"Clock {i:2} ( {clk_name} ) = {clk_freq_mhz:7.2f} MHz")
++            clk_name = clk_name.ljust(Z7IO_EXAMPLE_CLK_NAMES_LEN)
++            print(f"Clock {i:2} {clk_name} = {clk_freq_mhz:7.2f} MHz")
+ 
+ 
+ def main():
+@@ -71,7 +65,7 @@
+     parser = argparse.ArgumentParser(description="Show clock frequencies")
+     parser.add_argument(
+         "--hw_addr",
+-        default=ZUP_EXAMPLE_CLK_MON_ADDR,
++        default=Z7IO_EXAMPLE_CLK_MON_ADDR,
+         type=int,
+         help="Address of the Clock Monitor IP (from Vivado)",
+     )
+@@ -89,7 +83,7 @@
+     hw_addr = args.hw_addr
+     print(f"Hardware address: {hw_addr:#010x}".format(hw_addr))
+ 
+-    hw = HwAccessAarch64()
++    hw = HwAccessAarch32()
+ 
+     cm = ClockMonitor(hw, hw_addr)
+     id_reg, version = cm.get_id()
+@@ -98,6 +92,5 @@
+ 
+     cm.print_clocks()
+ 
+-
+ if __name__ == "__main__":
+     main()
+diff --color -urN -x '*.txt' recipes-demo/clock-monitor/files/HwAccessAarch32.py /home/huesmann/src/yocto/z7io/sources/meta-damc-fmc1z7io/recipes-demo/clock-monitor/files/HwAccessAarch32.py
+--- recipes-demo/clock-monitor/files/HwAccessAarch32.py	1970-01-01 01:00:00.000000000 +0100
++++ /home/huesmann/src/yocto/z7io/sources/meta-damc-fmc1z7io/recipes-demo/clock-monitor/files/HwAccessAarch32.py	2022-03-27 22:15:40.844170442 +0200
+@@ -0,0 +1,48 @@
++#! /usr/bin/env python3
++
++import logging
++import mmap
++import os
++import struct
++import subprocess
++
++class HwAccessAarch32(object):
++
++  def __init__(self):
++    self.logger = logging.getLogger(self.__class__.__name__)
++
++    user_filename = "/dev/mem"
++    self.fd_user = os.open(user_filename, os.O_RDWR)
++    self.mem = mmap.mmap(self.fd_user, 16 * 1024 * 1024, offset=0x44000000)
++    self.logger.debug("Opened %s, fd = %d", user_filename, self.fd_user)
++
++
++  def __close__(self):
++    self.mem.close()
++    os.close(self.fd_user)
++
++  def rd32(self, addr):
++    addr_w_o = addr
++    bs = self.mem[addr_w_o:addr_w_o + 4]
++    return struct.unpack("I", bs)[0]
++
++  def wr32(self, addr, data):
++    bs = struct.pack("I", int(data))
++    addr_w_o = addr
++    self.mem[addr_w_o:addr_w_o + 4] = bs
++
++  def rd_bytes(self, addr, length):
++    bs = b""
++    for i in range(0, length//4):
++      addr_w_o = addr + 4*i
++      b = self.mem[addr_w_o:addr_w_o + 4]
++      bs += b
++    return bs[0:length]
++
++def main():
++  hw = HwAccessAarch32()
++  print("ID reg: {0:08x}".format(hw.rd32(0x0)))
++  print("version: {0:08x}".format(hw.rd32(0x4)))
++
++if __name__ == "__main__":
++  main()
+diff --color -urN -x '*.txt' recipes-demo/clock-monitor/files/HwAccessAarch64.py /home/huesmann/src/yocto/z7io/sources/meta-damc-fmc1z7io/recipes-demo/clock-monitor/files/HwAccessAarch64.py
+--- recipes-demo/clock-monitor/files/HwAccessAarch64.py	2022-09-16 10:04:28.903947236 +0200
++++ /home/huesmann/src/yocto/z7io/sources/meta-damc-fmc1z7io/recipes-demo/clock-monitor/files/HwAccessAarch64.py	1970-01-01 01:00:00.000000000 +0100
+@@ -1,41 +0,0 @@
+-#! /usr/bin/env python3
+-
+-import logging
+-import mmap
+-import os
+-import struct
+-
+-ZYNQMP_AXI_FPD_PL_OFFSET = 0xA0000000
+-ZYNQMP_AXI_FPD_PL_SIZE = 256 * 1024 * 1024
+-
+-
+-class HwAccessAarch64:
+-    def __init__(
+-        self, mem_offset=ZYNQMP_AXI_FPD_PL_OFFSET, mem_size=ZYNQMP_AXI_FPD_PL_SIZE
+-    ):
+-        self.logger = logging.getLogger(self.__class__.__name__)
+-
+-        user_filename = "/dev/mem"
+-        self.mem_offset = mem_offset
+-        self.mem_size = mem_size
+-        self.fd_user = os.open(user_filename, os.O_RDWR)
+-        self.mem = mmap.mmap(self.fd_user, self.mem_size, offset=self.mem_offset)
+-        self.logger.debug("Opened %s, fd = %d", user_filename, self.fd_user)
+-
+-    def __close__(self):
+-        self.mem.close()
+-        os.close(self.fd_user)
+-
+-    def rd32(self, addr):
+-        self.logger.debug("read: addr = %#010x ...", addr)
+-        addr -= self.mem_offset
+-        bs = self.mem[addr : addr + 4]
+-        data = struct.unpack("I", bs)[0]
+-        self.logger.debug("read: ... data = %#010x", data)
+-        return data
+-
+-    def wr32(self, addr, data):
+-        self.logger.debug("write: addr = %#010x, data = %#010X", addr, data)
+-        addr -= self.mem_offset
+-        bs = struct.pack("I", int(data))
+-        self.mem[addr : addr + 4] = bs
