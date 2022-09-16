@@ -1,6 +1,6 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS_prepend_damc-fmc2zup := "${THISDIR}/files/fmc2zup:"
 
-SRC_URI += " \
+SRC_URI_append = " \
     file://system-user.dtsi \
     file://pl-conf.dtsi \
 "
