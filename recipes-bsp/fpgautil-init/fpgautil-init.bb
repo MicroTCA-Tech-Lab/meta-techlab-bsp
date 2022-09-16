@@ -17,3 +17,4 @@ do_install() {
     ln -sf ../init.d/fpgautil-init.sh  ${D}${sysconfdir}/rcS.d/S50fpgautil-init
 }
 
+# FIXME: Depend on FPGA manager, hdf & devicetree; choose right FPGA variant at runtime
