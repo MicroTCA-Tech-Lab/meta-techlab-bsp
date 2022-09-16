@@ -1,0 +1,32 @@
+From 8a93f5dd6b88b46c6ae10bc0fcb00c6d301a3e2e Mon Sep 17 00:00:00 2001
+From: Jan Marjanovic <jan.marjanovic@desy.de>
+Date: Wed, 22 Sep 2021 14:19:07 +0200
+Subject: [PATCH] Fix address size (32/64-bit) for the overlay
+
+---
+ device_tree/data/common_proc.tcl | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/device_tree/data/common_proc.tcl b/device_tree/data/common_proc.tcl
+index 745e9fc..a55f294 100644
+--- a/device_tree/data/common_proc.tcl
++++ b/device_tree/data/common_proc.tcl
+@@ -818,8 +818,13 @@ proc set_drv_def_dts {drv_handle} {
+ 			}
+ 		}
+ 		}
+-		hsi::utils::add_new_dts_param "${child_node}" "#address-cells" 2 int
+-		hsi::utils::add_new_dts_param "${child_node}" "#size-cells" 2 int
++		if {[string match -nocase $proctype "psu_cortexa53"] || [string match -nocase $proctype "psv_cortexa72"]} {
++			hsi::utils::add_new_dts_param "${child_node}" "#address-cells" 2 int
++			hsi::utils::add_new_dts_param "${child_node}" "#size-cells" 2 int
++		} else {
++			hsi::utils::add_new_dts_param "${child_node}" "#address-cells" 1 int
++			hsi::utils::add_new_dts_param "${child_node}" "#size-cells" 1 int
++		}
+ 		if {[string match -nocase $proctype "psu_cortexa53"] || [string match -nocase $proctype "ps7_cortexa9"]} {
+ 			set hw_name [get_property CONFIG.firmware_name [get_os]]
+ 			if {![llength $hw_name]} {
+-- 
+2.25.1
+

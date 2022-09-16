@@ -1,0 +1,43 @@
+From 26fdf27a04265ae39324670a8cab13256fecf436 Mon Sep 17 00:00:00 2001
+From: Jan Marjanovic <jan.marjanovic@desy.de>
+Date: Thu, 11 Feb 2021 14:30:44 +0100
+Subject: [PATCH 2/2] xilinx: add support for EEPROM with 16-bit addr
+
+---
+ board/xilinx/common/board.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/board/xilinx/common/board.c b/board/xilinx/common/board.c
+index 30eee73966..596dd42e03 100644
+--- a/board/xilinx/common/board.c
++++ b/board/xilinx/common/board.c
+@@ -10,6 +10,7 @@
+ 
+ #include <common.h>
+ #include <dm/uclass.h>
++#include <dm/ofnode.h>
+ #include <i2c.h>
+ 
+ int zynq_board_read_rom_ethaddr(unsigned char *ethaddr)
+@@ -31,6 +32,18 @@ int zynq_board_read_rom_ethaddr(unsigned char *ethaddr)
+ 	if (ret)
+ 		return ret;
+ 
++	const char *compat;
++	int len;
++	compat = ofnode_get_property(eeprom, "compatible", &len);
++	if (compat && strncmp(compat, "atmel,24c256", len-1) == 0) {
++		debug("%s: EEPROM with 16-bit addr used\n", __func__);
++		i2c_set_chip_offset_len(dev, 2);
++	} else {
++		int offs_len = i2c_get_chip_offset_len(dev);
++		debug("%s: use default value: %d-bit addr\n",
++			__func__, offs_len*8);
++	}
++
+ 	ret = dm_i2c_read(dev, CONFIG_ZYNQ_GEM_I2C_MAC_OFFSET, ethaddr, 6);
+ 	if (ret)
+ 		debug("%s: I2C EEPROM MAC address read failed\n", __func__);
+-- 
+2.25.1
+

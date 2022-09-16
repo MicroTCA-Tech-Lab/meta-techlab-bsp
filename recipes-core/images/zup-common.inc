@@ -1,3 +1,4 @@
+COMPATIBLE_MACHINE = "damc-fmc2zup"
 
 # here we include basic packages needed for the ZUP.
 # these packages are included regardless of the application.

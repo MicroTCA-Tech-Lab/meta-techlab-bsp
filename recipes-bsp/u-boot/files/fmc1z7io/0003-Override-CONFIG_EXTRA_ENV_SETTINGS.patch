@@ -1,0 +1,25 @@
+From 8bdda2709426a86b501a35baa8147becf74931f2 Mon Sep 17 00:00:00 2001
+From: Patrick Huesmann <patrick.huesmann@desy.de>
+Date: Mon, 7 Mar 2022 19:28:21 +0100
+Subject: [PATCH] Override CONFIG_EXTRA_ENV_SETTINGS
+
+---
+ include/configs/zynq-common.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/configs/zynq-common.h b/include/configs/zynq-common.h
+index d0614d8da4..0e4cd7c4e2 100644
+--- a/include/configs/zynq-common.h
++++ b/include/configs/zynq-common.h
+@@ -195,6 +195,8 @@
+ #include <config_distro_bootcmd.h>
+ #endif /* CONFIG_SPL_BUILD */
+ 
++#include "custom_default_env.h"
++
+ /* Default environment */
+ #ifndef CONFIG_EXTRA_ENV_SETTINGS
+ #define CONFIG_EXTRA_ENV_SETTINGS	\
+-- 
+2.25.1
+

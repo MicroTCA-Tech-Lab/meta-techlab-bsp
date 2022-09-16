@@ -1,0 +1,15 @@
+diff --git a/board/xilinx/common/board.c b/board/xilinx/common/board.c
+index 7e6340bad6..30eee73966 100644
+--- a/board/xilinx/common/board.c
++++ b/board/xilinx/common/board.c
+@@ -4,6 +4,10 @@
+  * Michal Simek <michal.simek@xilinx.com>
+  */
+ 
++#define DEBUG
++#undef CONFIG_LOGLEVEL
++#define CONFIG_LOGLEVEL 8
++
+ #include <common.h>
+ #include <dm/uclass.h>
+ #include <i2c.h>
