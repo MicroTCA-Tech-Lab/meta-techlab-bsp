@@ -1,5 +1,4 @@
-FILESEXTRAPATHS_prepend_damc-fmc2zup := "${THISDIR}/files/fmc2zup:"
-FILESEXTRAPATHS_prepend_damc-fmc1z7io := "${THISDIR}/files/fmc1z7io:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append = " \
 	file://mac-addr.cfg \
@@ -20,5 +19,5 @@ SRC_URI_append_damc-fmc1z7io = " \
 "
 
 do_configure_append() {
-        cp ${B}/../custom_default_env.h ${S}/include
+    cp ${B}/../custom_default_env.h ${S}/include
 }
