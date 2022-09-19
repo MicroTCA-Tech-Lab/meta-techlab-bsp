@@ -3,8 +3,7 @@ LICENSE = "CLOSED"
 PV = "1.0"
 PR = "r0"
 
-FILESEXTRAPATHS_prepend_damc-fmc2zup := "${THISDIR}/files/fmc2zup:"
-FILESEXTRAPATHS_prepend_damc-fmc1z7io := "${THISDIR}/files/fmc1z7io:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI = " file://fpgautil-init.sh "
 
 FILES_${PN}_append = " \
