@@ -1,5 +1,4 @@
-FILESEXTRAPATHS_prepend_damc-fmc2zup := "${THISDIR}/files/fmc2zup:"
-FILESEXTRAPATHS_prepend_damc-fmc1z7io := "${THISDIR}/files/fmc1z7io:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append = " \
     file://system-user.dtsi \
@@ -13,7 +12,7 @@ SRC_URI_append_damc-fmc1z7io = " \
 
 DEPENDS_append = "${@'device-tree-from-bd' if d.getVar('DT_FROM_BD_ENABLE') == '1' else ''}"
 
-do_configure_append_damc-fmc2zup() {
+do_configure_append() {
     # append PS config to the main file
     echo '#include "system-user.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
 
