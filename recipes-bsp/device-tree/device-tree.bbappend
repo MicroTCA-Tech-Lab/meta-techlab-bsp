@@ -6,7 +6,6 @@ SRC_URI_append = " \
 "
 
 SRC_URI_append_damc-fmc1z7io = " \
-    file://dma-buffer.dtsi \
     file://0001-Fix-address-size-32-64-bit-for-the-overlay.patch \
 "
 
