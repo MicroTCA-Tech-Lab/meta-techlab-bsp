@@ -1,4 +1,4 @@
-DESCRIPTION = "DAMC-FMC1Z7IO minimal recovery image for use as initramfs"
+DESCRIPTION = "Minimal recovery image for use as initramfs"
 
 require ./recipes-core/images/petalinux-image-minimal.bb
 
@@ -8,4 +8,4 @@ IMAGE_INSTALL_append = " vim-tiny"
 
 INITRAMFS_IMAGE_BUNDLE = "0"
 
-# To build this along z7io-image-demo(-full), add INITRAMFS_IMAGE = "z7io-recovery" to local.conf
+# To build this along (zup|z7io)-image-demo(-full), add INITRAMFS_IMAGE = "techlab-recovery" to local.conf
