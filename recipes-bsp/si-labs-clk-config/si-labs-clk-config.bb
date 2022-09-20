@@ -1,3 +1,5 @@
+COMPATIBLE_MACHINE = "damc-fmc1z7io|damc-fmc2zup"
+
 DESCRIPTION = "Configuration tool for Si Labs chips on I2C bus"
 LICENSE = "CLOSED"
 PV = "1.3"

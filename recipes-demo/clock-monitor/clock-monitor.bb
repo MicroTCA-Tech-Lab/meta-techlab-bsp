@@ -1,3 +1,5 @@
+COMPATIBLE_MACHINE = "damc-fmc1z7io|damc-fmc2zup"
+
 DESCRIPTION = "Clock monitor"
 LICENSE = "CLOSED"
 PV = "2.0"

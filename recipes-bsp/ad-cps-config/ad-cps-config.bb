@@ -1,3 +1,5 @@
+COMPATIBLE_MACHINE = "damc-fmc1z7io"
+
 DESCRIPTION = "Configuration tool for AD CPS on I2C bus"
 LICENSE = "CLOSED"
 PV = "1.3"

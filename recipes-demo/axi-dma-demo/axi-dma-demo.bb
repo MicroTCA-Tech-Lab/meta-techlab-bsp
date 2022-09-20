@@ -1,3 +1,5 @@
+COMPATIBLE_MACHINE = "damc-fmc1z7io|damc-fmc2zup"
+
 DESCRIPTION = "AXI DMA demo"
 LICENSE = "CLOSED"
 PV = "0.9.3"

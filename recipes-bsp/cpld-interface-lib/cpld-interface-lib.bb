@@ -1,4 +1,6 @@
-CRIPTION = "Libray for interfacing Z7IO CPLD for FP_IO and MLVDS control"
+COMPATIBLE_MACHINE = "damc-fmc1z7io"
+
+DESCRIPTION = "Libray for interfacing Z7IO CPLD for FP_IO and MLVDS control"
 LICENSE = "CLOSED"
 PV = "1.2"
 PR = "r1"

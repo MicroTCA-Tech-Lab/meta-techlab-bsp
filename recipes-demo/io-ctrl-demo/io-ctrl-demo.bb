@@ -1,3 +1,5 @@
+COMPATIBLE_MACHINE = "damc-fmc1z7io"
+
 DESCRIPTION = "IO Demo"
 LICENSE = "CLOSED"
 PV = "1.0"
