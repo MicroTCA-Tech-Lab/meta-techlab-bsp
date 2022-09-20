@@ -19,7 +19,8 @@ class HwAccessAarch64:
         self.mem_offset = mem_offset
         self.mem_size = mem_size
         self.fd_user = os.open(user_filename, os.O_RDWR)
-        self.mem = mmap.mmap(self.fd_user, self.mem_size, offset=self.mem_offset)
+        self.mem = mmap.mmap(self.fd_user, self.mem_size,
+                             offset=self.mem_offset)
         self.logger.debug("Opened %s, fd = %d", user_filename, self.fd_user)
 
     def __close__(self):
@@ -29,7 +30,7 @@ class HwAccessAarch64:
     def rd32(self, addr):
         self.logger.debug("read: addr = %#010x ...", addr)
         addr -= self.mem_offset
-        bs = self.mem[addr : addr + 4]
+        bs = self.mem[addr: addr + 4]
         data = struct.unpack("I", bs)[0]
         self.logger.debug("read: ... data = %#010x", data)
         return data
@@ -38,4 +39,4 @@ class HwAccessAarch64:
         self.logger.debug("write: addr = %#010x, data = %#010X", addr, data)
         addr -= self.mem_offset
         bs = struct.pack("I", int(data))
-        self.mem[addr : addr + 4] = bs
+        self.mem[addr: addr + 4] = bs
