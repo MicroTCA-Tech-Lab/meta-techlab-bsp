@@ -4,23 +4,22 @@ COMPATIBLE_MACHINE = "damc-fmc1z7io|damc-fmc2zup"
 # these packages are included regardless of the application.
 
 # Generic Linux applications
-IMAGE_INSTALL_append = " htop"
-IMAGE_INSTALL_append = " nano"
-IMAGE_INSTALL_append = " python3"
-IMAGE_INSTALL_append = " vim"
+IMAGE_INSTALL_append = " htop nano python3 vim"
 
+# Misc. hardware tools
 IMAGE_INSTALL_append = " packagegroup-hwtools"
 
 # TechLab specific applications
 IMAGE_INSTALL_append = " mmc-mailbox"
 
-# install if fpga-manager is enabled
+# Install 'fpgautil-init' if fpga-manager is enabled
 IMAGE_INSTALL_append = " ${@'fpgautil-init' if d.getVar('FPGA_MNGR_RECONFIG_ENABLE') == '1' else ''}"
 
-# remove unused image types
+# Remove unused image types
 IMAGE_FSTYPES_remove = "cpio.gz cpio cpio.gz.u-boot cpio.bz2 ext3 ext4 wic.qemu-sd jffs2"
 
-# TOOLCHAIN_TARGET_TASK_append = " kernel-devsrc"
+# Use real sshd instead of dropbear
+IMAGE_FEATURES += ' ssh-server-openssh'
 
-# Couldn't make Dropbear work with pam_group and pam_mkhomedir
-IMAGE_FEATURES += "${@bb.utils.contains('DISTRO_FEATURES', 'desy-login-support', ' ssh-server-openssh', '' ,d)}"
+# Enable package management for all image types except recovery
+IMAGE_FEATURES += ' package-management'
