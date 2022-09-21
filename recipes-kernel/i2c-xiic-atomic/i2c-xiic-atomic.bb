@@ -4,7 +4,7 @@ PV = "1.0.0"
 PR = "r0"
 
 SRC_URI = "git://github.com/MicroTCA-Tech-Lab/i2c-xiic-atomic.git;protocol=https"
-SRCREV = "3bc44b4f6332cf3d4596a97239aa12df0f78bf1d"
+SRCREV = "02ff8df7a1c6e9b26991b4f428ffdee5945a655e"
 
 LIC_FILES_CHKSUM = "file://LICENSE;md5=52769200b2e3d34d7d586182ce4081df"
 
