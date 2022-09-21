@@ -1,4 +1,4 @@
-require ./recipes-core/images/petalinux-image-minimal.bb
+require recipes-core/images/petalinux-image-minimal.bb
 
 IMAGE_FEATURES_append = " \
     petalinux-base \

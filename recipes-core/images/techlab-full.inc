@@ -1,4 +1,4 @@
-require ./recipes-core/images/petalinux-image-full.bb
+require recipes-core/images/petalinux-image-full.bb
 
 IMAGE_INSTALL_append = " packagegroup-techlab-devbox"
 IMAGE_INSTALL_append = " packagegroup-locale-support"
