@@ -1,21 +1,21 @@
-# Yocto layer for DAMC-FMC2ZUP
+# Yocto BSP layer for DAMC-FMC2ZUP and DAMC-FMC1Z7IO
 
 To be used together with Xilinx Yocto distribution, available at:
 
 https://github.com/Xilinx/yocto-manifests
 
-This layer also requires `meta-techlab-utils` layer.
+This layer also requires the `meta-techlab-utils` layer.
 
 ## Configuration
 
 ### Device tree from block diagram
 
-An xsct script from `meta-xilinx-tool` layer generates a device tree
+An xsct script from [`meta-xilinx-tools`](https://github.com/Xilinx/meta-xilinx-tools) layer generates device tree
 entries for all components connected to the Zynq IP block in the Block
-Diagram. In DAMC-FMC2ZUP BSP those are the IPs contained in the
-`system_bsp_fmc2zup` block design.
+Diagram. In DAMC-FMC2ZUP/FMC1Z7IO BSP those are the IPs contained in the
+`system_bsp_fmc2zup`/`_fmc1z7io` block design.
 
-Additionally, to provide device tree entires also from the `system_app`
+Additionally, to provide device tree entries also from the `system_app`
 block design, there is a recipe in the `meta-techlab-utils` layer,
 which can be activeted with the following option in the `conf/local.conf`:
 
