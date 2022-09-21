@@ -1,5 +1,3 @@
-COMPATIBLE_MACHINE = "damc-fmc1z7io|damc-fmc2zup"
-
 # here we include basic packages needed for TechLab hardware.
 # these packages are included regardless of the application.
 
