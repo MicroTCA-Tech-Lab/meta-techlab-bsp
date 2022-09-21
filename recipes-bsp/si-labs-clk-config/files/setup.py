@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name="si-labs-clk-config",
-    version="1.0",
+    version="1.3",
     packages=["slcc"],
     scripts=["si-labs-clk-config.py"],
 

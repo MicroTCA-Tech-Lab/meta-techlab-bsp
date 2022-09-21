@@ -27,14 +27,11 @@ from slcc.Si534xdriver import Si534xdriver
 from slcc.SiLabsTxtParser import SiLabsTxtParser
 from slcc.extra_logging import LEVEL_TRACE
 
-from i2c_bus_locator import i2c_bus_locator
+from slcc.BoardConfig import CLK_BUS
 
 
 def main():
     """ Process input args, parse text file, program the device over I2C """
-
-    # on DAMC-FMC2ZUP all clock I2c are on the first bus
-    ZUP_CLK_BUS = i2c_bus_locator(compat="cdns", addr=0xFF020000)[0]
 
     parser = argparse.ArgumentParser(
         description='Program Si Labs device on I2C bus')
@@ -42,11 +39,11 @@ def main():
                         help='print debug information')
     parser.add_argument('--trace', action='store_true',
                         help='print trace information (very verbose)')
-    parser.add_argument('--i2c_bus', default=ZUP_CLK_BUS,
+    parser.add_argument('--i2c_bus', default=CLK_BUS,
                         help='select I2C bus')
     parser.add_argument('i2c_addr', type=lambda x: int(x, 0),
                         help='address of the device on I2C bus')
-    parser.add_argument('--no_reset',action='store_true',
+    parser.add_argument('--no_reset', action='store_true',
                         help='do not reset the clk gen after the programming')
     parser.add_argument('filename', type=str,
                         help='txt from Si Labs ClockBuilder Pro')
@@ -72,7 +69,9 @@ def main():
     parser = SiLabsTxtParser(args.filename)
     parser.parse(args.no_reset, si5341.wr)
 
+    logging.log(logging.INFO, "wrote file: %s", args.filename)
     logging.log(logging.INFO, "programming done")
+
 
 if __name__ == "__main__":
     main()

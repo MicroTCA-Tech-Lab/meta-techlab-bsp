@@ -30,6 +30,7 @@ class Si534xdriver:
     REG_ADDR_DEVICE_REV = (0x5, 0)
     REG_ADDR_TEMP_GRADE = (0x9, 0)
     REG_ADDR_PKG_ID = (0xa, 0)
+    REG_ADDR_IN_CLK_SEL = (0x21, 0)
 
     EXPECTED_PN_BASE = [0x5340, 0x5341]
 
@@ -102,13 +103,13 @@ class Si534xdriver:
 def main():
     """ Example usage, reads info from the I2C device """
 
-    ZUP_CLK_BUS = 0
-    ZUP_SI5341_PL_ADDR = 0x77
+    Z7IO_CLK_BUS = 0
+    Z7IO_SI5341_PL_ADDR = 0x77
 
     logging.basicConfig(level=logging.DEBUG)
 
-    clk_bus = smbus.SMBus(ZUP_CLK_BUS)
-    si5341 = Si5341driver(clk_bus, ZUP_SI5341_PL_ADDR)
+    clk_bus = smbus.SMBus(Z7IO_CLK_BUS)
+    si5341 = Si5341driver(clk_bus, Z7IO_SI5341_PL_ADDR)
     si5341._check_device()  # pylint: disable=protected-access
 
 if __name__ == "__main__":
