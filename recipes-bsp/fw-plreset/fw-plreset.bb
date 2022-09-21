@@ -4,9 +4,8 @@ LIC_FILES_CHKSUM=""
 PV = "2.0.0"
 PR = "r0"
 
-
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
-SRC_URI_append = " file://fw_plreset.sh"
+SRC_URI = "file://fw_plreset.sh"
 
 FILES_${PN} = " \
     /etc/rcS.d/S85fw_plreset \
