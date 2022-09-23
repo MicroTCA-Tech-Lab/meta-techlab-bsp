@@ -24,19 +24,19 @@ do_configure_append() {
         # append PL-related things to the overlay
         echo '/include/ "pl-conf.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
         if [ ${DT_FROM_BD_ENABLE} = "1" ]; then
-            # Create separate PL overlay (.dtbo) for each FPGA variant
-            # We create pl_var_<xyz>.dtsi; the upstream recipe will build pl_var_<xyz>.dtbo for us
+            # Create separate PL overlay (.dtbo) for each PL variant
+            # We create pl-var-<xyz>.dtsi; the upstream recipe will build pl-var-<xyz>.dtbo for us
             for VAR_DTS in ${WORKDIR}/recipe-sysroot/opt/mtca-tech-lab/dt/app_from_bd_*.dts; do
                 DTS_BASENAME=$(basename -s .dts ${VAR_DTS})
-                FPGA_VARIANT=$(echo ${DTS_BASENAME} | cut -d_ -f4)
+                PL_VARIANT=$(echo ${DTS_BASENAME} | cut -d_ -f4)
 
                 echo "DTS_BASENAME: ${DTS_BASENAME}"
-                echo "FPGA_VARIANT: ${FPGA_VARIANT}"
+                echo "PL_VARIANT: ${PL_VARIANT}"
 
-                VAR_DTSI="board_app_${FPGA_VARIANT}.dtsi"
+                VAR_DTSI="board_app_${PL_VARIANT}.dtsi"
                 cp $VAR_DTS ${DT_FILES_PATH}/${VAR_DTSI}
-                cp ${DT_FILES_PATH}/pl.dtsi ${DT_FILES_PATH}/pl_var_${FPGA_VARIANT}.dtsi
-                echo '/include/ "'${VAR_DTSI}'"' >> ${DT_FILES_PATH}/pl_var_${FPGA_VARIANT}.dtsi
+                cp ${DT_FILES_PATH}/pl.dtsi ${DT_FILES_PATH}/pl-var-${PL_VARIANT}.dtsi
+                echo '/include/ "'${VAR_DTSI}'"' >> ${DT_FILES_PATH}/pl-var-${PL_VARIANT}.dtsi
             done
             echo '/include/ "board_app.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
         fi
