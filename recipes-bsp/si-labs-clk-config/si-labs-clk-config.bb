@@ -41,7 +41,7 @@ RDEPENDS_${PN} = "python3 python3-smbus i2c-bus-locator"
 
 inherit setuptools3
 
-SLCC_BASE_DIR = "/opt/mtca-tech-lab/${MACHINE}/clock_config"
+SLCC_BASE_DIR = "${TECHLAB_BOARD_DIR}/clock_config"
 
 FILES_${PN}_append_damc-fmc2zup = " \
     ${SLCC_BASE_DIR}/0x75_zone3.txt \
