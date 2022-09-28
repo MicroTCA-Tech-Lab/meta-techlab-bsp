@@ -26,15 +26,13 @@ do_configure_append() {
         if [ ${DT_FROM_BD_ENABLE} = "1" ]; then
             # Create separate PL overlay (.dtbo) for each PL variant
             # We create pl-var-<xyz>.dtsi; the upstream recipe will build pl-var-<xyz>.dtbo for us
-            for VAR_DTS in ${WORKDIR}/recipe-sysroot/opt/mtca-tech-lab/dt/app_from_bd_*.dts; do
-                DTS_BASENAME=$(basename -s .dts ${VAR_DTS})
-                PL_VARIANT=$(echo ${DTS_BASENAME} | cut -d_ -f4)
-
-                echo "DTS_BASENAME: ${DTS_BASENAME}"
+            HW_DESIGNS=${RECIPE_SYSROOT}/opt/xilinx/hw-design
+            for PL_VARIANT in $(cat ${HW_DESIGNS}/pl-variants); do
                 echo "PL_VARIANT: ${PL_VARIANT}"
 
+                VAR_DTS="${WORKDIR}/recipe-sysroot/opt/mtca-tech-lab/dt/app_from_bd_${PL_VARIANT}.dts"
                 VAR_DTSI="board_app_${PL_VARIANT}.dtsi"
-                cp $VAR_DTS ${DT_FILES_PATH}/${VAR_DTSI}
+                cp ${VAR_DTS} ${DT_FILES_PATH}/${VAR_DTSI}
                 cp ${DT_FILES_PATH}/pl.dtsi ${DT_FILES_PATH}/pl-var-${PL_VARIANT}.dtsi
                 echo '/include/ "'${VAR_DTSI}'"' >> ${DT_FILES_PATH}/pl-var-${PL_VARIANT}.dtsi
             done
