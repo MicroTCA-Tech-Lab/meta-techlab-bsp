@@ -15,6 +15,10 @@ get_chip_variant() {
         chip_variant="7z035"
         ;;
 
+    "0x11")
+        chip_variant="7z045"
+        ;;
+
     *)
         echo "${scriptname}: Chip variant not found: unknown ID code of '${chip_idcode}'"
         echo "${scriptname}: FPGA configuration aborted"
