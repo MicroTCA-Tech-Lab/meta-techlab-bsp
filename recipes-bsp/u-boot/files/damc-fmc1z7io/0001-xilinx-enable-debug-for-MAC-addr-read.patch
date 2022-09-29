@@ -1,5 +1,5 @@
 diff --git a/board/xilinx/common/board.c b/board/xilinx/common/board.c
-index 7e6340bad6..30eee73966 100644
+index 771b74941f..5d29730efd 100644
 --- a/board/xilinx/common/board.c
 +++ b/board/xilinx/common/board.c
 @@ -4,6 +4,10 @@
@@ -11,5 +11,8 @@ index 7e6340bad6..30eee73966 100644
 +#define CONFIG_LOGLEVEL 8
 +
  #include <common.h>
+ #include <asm/sections.h>
  #include <dm/uclass.h>
- #include <i2c.h>
+-- 
+2.25.1
+
