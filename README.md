@@ -8,10 +8,10 @@ This layer also requires the `meta-techlab-utils` layer.
 
 ### Device tree from block diagram
 
-An xsct script from [`meta-xilinx-tools`](https://github.com/Xilinx/meta-xilinx-tools) layer generates device tree
-entries for all components connected to the Zynq IP block in the Block
-Diagram. In DAMC-FMC2ZUP/-FMC1Z7IO BSP those are the IPs contained in the
-`system_bsp_fmc2zup`/`_fmc1z7io` block design.
+An xsct script from [`meta-xilinx-tools`](https://github.com/Xilinx/meta-xilinx-tools) generates device tree
+entries for all components connected to the Zynq IP block in the Block Diagram.
+In an application layer (e.g. `meta-techlab-demo`) that provides an `.xsa` file via `external-hdf.bbappend` those are the IPs
+contained in the `system_bsp_...` block design.
 
 Additionally, to provide device tree entries also from the `system_app`
 block design, there is a recipe in the `meta-techlab-utils` layer,
@@ -21,10 +21,7 @@ which can be activated with the following option in the `conf/local.conf`:
 DT_FROM_BD_ENABLE = "1"
 ```
 
-The output of this recipe is `app_from_bd.dts` which has to be included
-by the `device-tree.bbappend` in the application layer. See
-[recipes-bsp/device-tree/device-tree.bbappend](recipes-bsp/device-tree/device-tree.bbappend)
-for an example.
+The output of this recipe is `app_from_bd.dts` which gets included by [device-tree.bbappend](recipes-bsp/device-tree/device-tree.bbappend)
 
 ### FPGA manager
 
