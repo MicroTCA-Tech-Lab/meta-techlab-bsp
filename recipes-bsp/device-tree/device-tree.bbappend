@@ -22,7 +22,6 @@ do_configure_append() {
 
     if [ ${FPGA_MNGR_RECONFIG_ENABLE} = "1" ]; then
         # append PL-related things to the overlay
-        echo '/include/ "pl-conf.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
         if [ ${DT_FROM_BD_ENABLE} = "1" ]; then
             # Create separate PL overlay (.dtbo) for each PL variant
             # We create pl-var-<xyz>.dtsi; the upstream recipe will build pl-var-<xyz>.dtbo for us
@@ -35,14 +34,16 @@ do_configure_append() {
                 cp ${VAR_DTS} ${DT_FILES_PATH}/${VAR_DTSI}
                 cp ${DT_FILES_PATH}/pl.dtsi ${DT_FILES_PATH}/pl-var-${PL_VARIANT}.dtsi
                 echo '/include/ "'${VAR_DTSI}'"' >> ${DT_FILES_PATH}/pl-var-${PL_VARIANT}.dtsi
+                echo '/include/ "pl-conf.dtsi"'  >> ${DT_FILES_PATH}/pl-var-${PL_VARIANT}.dtsi
             done
             echo '/include/ "board_app.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
+            echo '/include/ "pl-conf.dtsi"'   >> ${DT_FILES_PATH}/pl.dtsi
         fi
     else
-        # append PL-related things to the main file
-        echo '#include "pl-conf.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
         if [ ${DT_FROM_BD_ENABLE} = "1" ]; then
             echo '#include "board_app.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
         fi
+        # append PL-related things to the main file
+        echo '#include "pl-conf.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
     fi
 }
