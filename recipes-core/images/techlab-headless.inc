@@ -17,3 +17,6 @@ IMAGE_INSTALL_append = " packagegroup-recovery-support"
 
 inherit extrausers
 EXTRA_USERS_PARAMS = "usermod -s /bin/zsh root"
+
+# zsh breaks populate_sdk
+TOOLCHAIN_TARGET_TASK_remove = "packagegroup-techlab-devbox"

@@ -8,3 +8,6 @@ IMAGE_FEATURES_remove = " petalinux-vitisai petalinux-openamp"
 
 inherit extrausers
 EXTRA_USERS_PARAMS = "usermod -s /bin/zsh root"
+
+# zsh breaks populate_sdk
+TOOLCHAIN_TARGET_TASK_remove = "packagegroup-techlab-devbox"
