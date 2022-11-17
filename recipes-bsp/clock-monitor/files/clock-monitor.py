@@ -50,7 +50,7 @@ def main():
     parser.add_argument(
         "--hw_addr",
         default=BoardSetup.CLK_MON_ADDR,
-        type=int,
+        type=lambda x: int(x, 0),
         help="Address of the Clock Monitor IP (from Vivado)",
     )
     parser.add_argument(
