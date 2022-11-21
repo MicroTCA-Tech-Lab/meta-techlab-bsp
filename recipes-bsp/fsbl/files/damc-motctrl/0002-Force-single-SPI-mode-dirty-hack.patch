@@ -1,0 +1,26 @@
+From c6607696f8aaaac750c4de6c5198dc53a6963891 Mon Sep 17 00:00:00 2001
+From: Patrick Huesmann <patrick.huesmann@desy.de>
+Date: Wed, 2 Mar 2022 10:25:33 +0100
+Subject: [PATCH] Force single SPI mode (dirty hack)
+
+---
+ lib/sw_apps/zynq_fsbl/src/qspi.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/lib/sw_apps/zynq_fsbl/src/qspi.c b/lib/sw_apps/zynq_fsbl/src/qspi.c
+index 348cda36a8..b259deb257 100644
+--- a/lib/sw_apps/zynq_fsbl/src/qspi.c
++++ b/lib/sw_apps/zynq_fsbl/src/qspi.c
+@@ -158,6 +158,9 @@
+ #define QSPI_BUSWIDTH_TWO	1U
+ #define QSPI_BUSWIDTH_FOUR	2U
+ 
++#undef XPAR_XQSPIPS_0_QSPI_BUS_WIDTH
++#define XPAR_XQSPIPS_0_QSPI_BUS_WIDTH QSPI_BUSWIDTH_ONE
++
+ /**************************** Type Definitions *******************************/
+ 
+ /***************** Macros (Inline Functions) Definitions *********************/
+-- 
+2.25.1
+

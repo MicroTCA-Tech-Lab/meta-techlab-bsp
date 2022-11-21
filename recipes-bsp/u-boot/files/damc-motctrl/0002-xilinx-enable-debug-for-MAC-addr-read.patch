@@ -1,0 +1,27 @@
+From 36a11b9d6af5b4f2b0e48cc64fc8603b3ae6771f Mon Sep 17 00:00:00 2001
+From: Jan Marjanovic <jan.marjanovic@desy.de>
+Date: Tue, 20 Oct 2020 19:04:16 +0200
+Subject: [PATCH] xilinx: enable debug for MAC addr read
+
+---
+ board/xilinx/common/board.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/board/xilinx/common/board.c b/board/xilinx/common/board.c
+index 5fdd994705..3669c80ec0 100644
+--- a/board/xilinx/common/board.c
++++ b/board/xilinx/common/board.c
+@@ -4,6 +4,10 @@
+  * Michal Simek <michal.simek@xilinx.com>
+  */
+ 
++#define DEBUG
++#undef CONFIG_LOGLEVEL
++#define CONFIG_LOGLEVEL 8
++
+ #include <common.h>
+ #include <asm/sections.h>
+ #include <dm/uclass.h>
+-- 
+2.17.1
+

@@ -10,3 +10,8 @@ SRC_URI_append_damc-fmc1z7io = "\
     file://0001-Add-board-specific-lines.patch \
     file://0002-Force-single-SPI-mode-dirty-hack.patch \
 "
+
+SRC_URI_append_damc-motctrl = "\
+    file://0001-Add-board-specific-lines.patch \
+    file://0002-Force-single-SPI-mode-dirty-hack.patch \
+"
