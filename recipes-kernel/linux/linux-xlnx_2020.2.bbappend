@@ -19,4 +19,5 @@ SRC_URI_append_damc-motctrl = " \
 	file://usb.cfg \
 	file://fpga-debugfs.cfg \
     file://0001-Allow-reading-the-ZynqMP-IDCODE.patch \
+    file://0001-Add-internal_pcspma-mode.patch \
 "

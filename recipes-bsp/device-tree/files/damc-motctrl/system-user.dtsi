@@ -19,6 +19,17 @@
 
 // GEM1, GEM3: RGMII <--> 88E1512
 // GEM2: 1000BASE-X (no ext. PHY)
+&gem2 {
+    status = "okay";
+    local-mac-address = [DE AD BE FF 01 01];
+    is-internal-pcspma;
+    phy-mode = "moca";
+    phy-connection-type = "1000base-x";
+    fixed-link {
+          speed = <1000>;
+          full-duplex;
+    };
+};
 /*
 &gem1 {
     phy-handle = <&phy0>;
@@ -130,7 +141,7 @@
         #address-cells = <1>;
         #size-cells = <1>;
         reg = <0x0>;
-        spi-tx-bus-width = <4>;
+        spi-tx-bus-width = <1>;
         spi-rx-bus-width = <4>;
         spi-max-frequency = <50000000>;
         partitions {
