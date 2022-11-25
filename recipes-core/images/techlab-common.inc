@@ -22,13 +22,16 @@ IMAGE_FEATURES += ' ssh-server-openssh'
 # Enable package management for all image types except recovery
 IMAGE_FEATURES += ' package-management'
 
+# Enter machine & image name into custom banners
 MACH_UPPER = "${@d.getVar('MACHINE').upper()}"
-
 fixup_custom_banners() {
     sed -i 's/MACHINE/${MACH_UPPER}/g' ${IMAGE_ROOTFS}/etc/issue
     sed -i 's/MACHINE/${MACH_UPPER}/g' ${IMAGE_ROOTFS}/etc/banner
     sed -i 's/IMAGE/${IMAGE_BASENAME}/g' ${IMAGE_ROOTFS}/etc/issue
     sed -i 's/IMAGE/${IMAGE_BASENAME}/g' ${IMAGE_ROOTFS}/etc/banner
 }
-
 ROOTFS_POSTPROCESS_COMMAND += "fixup_custom_banners; "
+
+# Gather version information into /etc/build
+inherit image-buildinfo-mod
+IMAGE_BUILDINFO_VARS = "DISTRO_VERSION MACHINE IMAGE_BASENAME IMAGE_NAME"
