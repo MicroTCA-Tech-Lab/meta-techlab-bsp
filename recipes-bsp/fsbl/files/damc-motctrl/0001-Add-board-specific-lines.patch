@@ -1,0 +1,26 @@
+From 02531af7739a8c209cdad0fd792c0359136ba1a8 Mon Sep 17 00:00:00 2001
+From: Sven Stubbe <sven.stubbe@desy.de>
+Date: Tue, 26 May 2020 11:46:27 +0200
+Subject: [PATCH] Add board specific lines
+
+---
+ lib/sw_apps/zynq_fsbl/src/main.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/lib/sw_apps/zynq_fsbl/src/main.c b/lib/sw_apps/zynq_fsbl/src/main.c
+index 51113a5ac..dcb1a205a 100644
+--- a/lib/sw_apps/zynq_fsbl/src/main.c
++++ b/lib/sw_apps/zynq_fsbl/src/main.c
+@@ -293,6 +293,9 @@ int main(void)
+ 			SDK_RELEASE_YEAR, SDK_RELEASE_QUARTER,
+ 			__DATE__,__TIME__);
+ 
++	fsbl_printf(DEBUG_GENERAL,"DAMC-MOTCTRL board support by:\r\n");
++	fsbl_printf(DEBUG_GENERAL, "  DESY MicroTCA Technology Lab\r\n");
++
+ #ifdef XPAR_PS7_DDR_0_S_AXI_BASEADDR
+ 
+     /*
+-- 
+2.17.1
+

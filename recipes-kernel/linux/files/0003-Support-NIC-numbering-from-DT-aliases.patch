@@ -1,0 +1,46 @@
+From 9b00e9266e7538c78aa32fdc649cad6f5fb61440 Mon Sep 17 00:00:00 2001
+From: Patrick Huesmann <patrick.huesmann@desy.de>
+Date: Wed, 23 Nov 2022 13:12:35 +0100
+Subject: [PATCH] Support NIC numbering from DT aliases
+
+---
+ drivers/net/ethernet/cadence/macb_main.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
+index 4333eef0d4ab..adc8c2e0bd38 100644
+--- a/drivers/net/ethernet/cadence/macb_main.c
++++ b/drivers/net/ethernet/cadence/macb_main.c
+@@ -4312,7 +4312,8 @@ static int macb_probe(struct platform_device *pdev)
+ 	void __iomem *mem;
+ 	const u8 *mac;
+ 	struct macb *bp;
+-	int err, val;
++	int err, val, id;
++	char name_tmp[10];
+ 
+ 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	mem = devm_ioremap_resource(&pdev->dev, regs);
+@@ -4342,7 +4343,18 @@ static int macb_probe(struct platform_device *pdev)
+ 	native_io = hw_is_native_io(mem);
+ 
+ 	macb_probe_queues(mem, native_io, &queue_mask, &num_queues);
+-	dev = alloc_etherdev_mq(sizeof(*bp), num_queues);
++
++	/* Read ethernet DT alias ID and assign device name accordingly */
++	id = of_alias_get_id(np, "ethernet");
++	if (id < 0) {
++		dev_warn(&pdev->dev, "Failed to get DT ethernet alias ID (%u), using default name\n", id);
++		dev = alloc_etherdev_mq(sizeof(*bp), num_queues);
++	} else {
++		snprintf(name_tmp, sizeof(name_tmp), "eth%d", id);
++		dev_warn(&pdev->dev, "Set name from DT ethernet alias: %s\n", name_tmp);
++		dev = alloc_netdev_mqs(sizeof(*bp), name_tmp, NET_NAME_PREDICTABLE, ether_setup, num_queues, num_queues);
++	}
++
+ 	if (!dev) {
+ 		err = -ENOMEM;
+ 		goto err_disable_clocks;
+-- 
+2.25.1
+
