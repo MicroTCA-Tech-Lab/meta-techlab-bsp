@@ -39,6 +39,23 @@ script from Linux userspace instead of u-boot.
 Please check [Xilinx Wiki: Solution Zynq PL Programming With FPGA Manager](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841645/Solution+Zynq+PL+Programming+With+FPGA+Manager)
 for more information.
 
+### Image versioning & build information
+
+There is a post-processing step defined in `meta-techlab-utils/classes/image-buildinfo-mod.bbclass` which creates a text file `/etc/build` on the target rootfs containing information about the layer revisions used in the image build. The Yocto manifest can be pinned and assigned a version tag using the helper script `meta-techlab-utils/scripts/tag-image.sh`. The `image-buildinfo-mod` will try to retrieve a version tag and identify the layer setup used in the image build.
+
+#### Troubleshooting
+
+If an old (pre-v2.35.2) Git version is installed on the build host, `image-buildinfo-mod` can fail with a Git error such as "dubious ownership in repository" or "unsafe repository". This is due to bitbake using `fakeroot` while postprocessing the target rootfs. There are two options to recover from this error:
+
+* Preferred solution: Update Git to a recent version
+    ```
+    sudo add-apt-repository ppa:git-core/ppa && sudo apt update && sudo apt install git
+    ```
+* If Git update is not possible: Disable buildinfo class
+    ```
+    echo 'SKIP_BUILDINFO="1"' >> conf/local.conf
+    ```
+
 ## FPGA bitstream integration
 
 See [fpga-integration.md](fpga-integration.md) for a detailed view of how FPGA bitstreams are handled in the Yocto system.

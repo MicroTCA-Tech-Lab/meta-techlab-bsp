@@ -32,6 +32,6 @@ fixup_custom_banners() {
 }
 ROOTFS_POSTPROCESS_COMMAND += "fixup_custom_banners; "
 
-# Gather version information into /etc/build
-inherit image-buildinfo-mod
+# Gather version information into /etc/build, override with SKIP_BUILDINFO="1" in local.conf
+inherit ${@'image-buildinfo-mod' if d.getVar('SKIP_BUILDINFO') != '1' else ''}
 IMAGE_BUILDINFO_VARS = "DISTRO_VERSION MACHINE IMAGE_BASENAME BUILDNAME"
