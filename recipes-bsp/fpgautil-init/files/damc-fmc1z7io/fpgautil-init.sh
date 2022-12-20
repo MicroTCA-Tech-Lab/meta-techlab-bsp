@@ -7,6 +7,10 @@ get_chip_variant() {
     chip_idcode=$(cat /sys/devices/soc0/soc_id)
     case ${chip_idcode} in
 
+    "0xc")
+        chip_variant="7z030"
+        ;;
+
     "0x0c")
         chip_variant="7z030"
         ;;
