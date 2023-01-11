@@ -15,6 +15,7 @@ IMAGE_INSTALL_append = " ${@'fpgautil-init' if d.getVar('FPGA_MNGR_RECONFIG_ENAB
 
 # Remove unused image types
 IMAGE_FSTYPES_remove = "cpio.gz cpio cpio.gz.u-boot cpio.bz2 ext3 ext4 wic.qemu-sd jffs2"
+IMAGE_BOOT_FILES_remove = "zImage u-boot.bin"
 
 # Use real sshd instead of dropbear
 IMAGE_FEATURES += ' ssh-server-openssh'
