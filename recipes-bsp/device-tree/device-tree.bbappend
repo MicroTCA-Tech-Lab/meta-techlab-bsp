@@ -47,3 +47,8 @@ do_configure_append() {
         echo '#include "pl-conf.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
     fi
 }
+
+do_deploy_append_damc-fmc1z7io-rev-a() {
+    # IMAGE_BOOT_FILES on Z7IO uses damc-fmc1z7io-system.dtb
+    ln -sf damc-fmc1z7io-rev-a-system.dtb ${DEPLOYDIR}/damc-fmc1z7io-system.dtb
+}
