@@ -90,7 +90,6 @@
 };
 
 &dwc3_0 {
-    status = "okay";
     dr_mode = "host";
     snps,usb3_lpm_capable;
     phy-names = "usb3-phy";
@@ -102,7 +101,6 @@
 // and https://www.zachpfeffer.com/single-post/Integrate-a-QSPI-using-PetaLinux-Tools-Part-2
 // going very slow
 &qspi {
-    status = "okay";
     flash@0 {
         compatible = "jedec,spi-nor";
         #address-cells = <1>;
