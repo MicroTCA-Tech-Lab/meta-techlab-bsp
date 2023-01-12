@@ -59,3 +59,10 @@ If an old (pre-v2.35.2) Git version is installed on the build host, `image-build
 ## FPGA bitstream integration
 
 See [fpga-integration.md](fpga-integration.md) for a detailed view of how FPGA bitstreams are handled in the Yocto system.
+
+## SD card image
+
+To create a xz-compressed SD card image, enter (from the BitBake environment):
+```bash
+wic create sdimage-bootpart -e <image-name> -c xz --no-fstab-update
+```
