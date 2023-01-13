@@ -1,4 +1,4 @@
-COMPATIBLE_MACHINE = "damc-fmc1z7io"
+COMPATIBLE_MACHINE = "(damc-fmc1z7io|damc-motctrl)"
 
 DESCRIPTION = "Configuration tool for AD CPS on I2C bus"
 LICENSE = "CLOSED"
@@ -33,6 +33,10 @@ SRC_URI_append_damc-fmc1z7io-rev-b = " \
     file://example_config/z7io_0x44_cps_bp_pcie_x4.txt \
 "
 
+SRC_URI_append_damc-motctrl = " \
+    file://example_config/motctrl_0x44_cps_eth_sfp.txt \
+"
+
 RDEPENDS_${PN} = "python3 python3-smbus i2c-bus-locator"
 
 inherit setuptools3
@@ -59,6 +63,11 @@ FILES_${PN}_append_damc-fmc1z7io-rev-b = " \
     /opt/mtca-tech-lab/damc-fmc1z7io/cps_config/z7io_0x44_cps_bp_llc0_llc1.txt \
     /opt/mtca-tech-lab/damc-fmc1z7io/cps_config/z7io_0x44_cps_bp_llc2_llc3.txt \
     /opt/mtca-tech-lab/damc-fmc1z7io/cps_config/z7io_0x44_cps_bp_pcie_x4.txt \
+"
+
+FILES_${PN}_append_damc-motctrl = " \
+    /opt/mtca-tech-lab/damc-motctrl/cps_config/motctrl_0x44_cps_eth_sfp.txt \
+    /opt/mtca-tech-lab/damc-motctrl/cps_config/0x44_eth_sfp.txt \
 "
 
 do_install_append_damc-fmc1z7io-rev-a() {
@@ -93,6 +102,16 @@ do_install_append_damc-fmc1z7io-rev-b() {
     ln -s -r ${CONFDIR}/z7io_0x44_cps_bp_llc0_llc1.txt ${CONFDIR}/0x44_llc0_llc1.txt
     ln -s -r ${CONFDIR}/z7io_0x44_cps_bp_llc2_llc3.txt ${CONFDIR}/0x44_llc2_llc3.txt
     ln -s -r ${CONFDIR}/z7io_0x44_cps_bp_pcie_x4.txt   ${CONFDIR}/0x44_pcie_x4.txt
+}
+
+do_install_append_damc-motctrl() {
+    CONFDIR="${D}${base_prefix}/opt/mtca-tech-lab/damc-motctrl/cps_config/"
+
+    install -d ${CONFDIR}
+    install -m 0644 ${WORKDIR}/example_config/motctrl_0x44_cps_eth_sfp.txt ${CONFDIR}
+
+    # configs are symbolic links so that other applications can overwrite them
+    ln -s -r ${CONFDIR}/motctrl_0x44_cps_eth_sfp.txt ${CONFDIR}/0x44_eth_sfp.txt
 }
 
 do_install_append() {

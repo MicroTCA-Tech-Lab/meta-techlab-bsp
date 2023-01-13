@@ -1,0 +1,19 @@
+# Route PS Ethernet eth1 & eth2 (RGMII_ETH0, RGMII_ETH1) to SFP1 & SFP2
+#
+# RGMII_ETH0_TX => I11
+# RGMII_ETH1_TX => I5
+#       SFP1_RX => I6
+#       SFP2_RX => I4
+#
+#            O6 => RGMII_ETH0_RX
+#            O7 => RGMII_ETH1_RX
+#            O4 => SFP1_TX (+/- swapped!)
+#            O5 => SFP2_TX
+#
+# ETH0 -> SFP1:
+#   I11 -> O4 (swap?)
+#    I6 -> O6
+# ETH1 -> SFP2:
+#    I5 -> O5
+#    I4 -> O7
+#
