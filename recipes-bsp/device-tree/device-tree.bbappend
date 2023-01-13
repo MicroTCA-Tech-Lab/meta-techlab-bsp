@@ -1,5 +1,3 @@
-COMPATIBLE_MACHINE = "(damc-motctrl)|(damc-fmc.*)"
-
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append = " \
@@ -13,20 +11,17 @@ SRC_URI_append_damc-fmc1z7io = " \
 
 DEPENDS_append = "${@'device-tree-from-bd' if d.getVar('DT_FROM_BD_ENABLE') == '1' else ''}"
 
-# Use specific TechLab DTSI file in DTG for MACHINE
-YAML_DT_BOARD_FLAGS_damc-fmc1z7io       ?= "{BOARD damc-fmc1z7io}"
-YAML_DT_BOARD_FLAGS_damc-fmc1z7io-rev-a ?= "{BOARD damc-fmc1z7io-rev-a}"
-YAML_DT_BOARD_FLAGS_damc-fmc2zup        ?= "{BOARD damc-fmc2zup}"
-YAML_DT_BOARD_FLAGS_damc-motctrl        ?= "{BOARD damc-motctrl}"
+# For Z7IO, also handle the -rev-a variant
+YAML_DT_BOARD_FLAGS_damc-fmc1z7io ?= "{BOARD ${MACHINE}}"
+YAML_DT_BOARD_FLAGS_damc-fmc2zup  ?= "{BOARD damc-fmc2zup}"
+YAML_DT_BOARD_FLAGS_damc-motctrl  ?= "{BOARD damc-motctrl}"
 
-
-do_configure_prepend_${MACHINE}() {
-    # Inject TechLab DTSI file into DTG tool
+do_configure_prepend() {
+    # Inject board DTSI file into DTG tool
     cp ${WORKDIR}/${MACHINE}.dtsi ${WORKDIR}/git/device_tree/data/kernel_dtsi/2020.2/BOARD/
 }
 
 do_configure_append() {
-
     if [ ${DT_FROM_BD_ENABLE} = "1" ]; then
         # copy the .dts for the app
         cp ${WORKDIR}/recipe-sysroot/opt/mtca-tech-lab/dt/app_from_bd.dts ${DT_FILES_PATH}/board_app.dtsi
