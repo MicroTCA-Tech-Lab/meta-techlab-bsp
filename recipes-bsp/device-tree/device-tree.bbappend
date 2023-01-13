@@ -1,7 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append = " \
-    file://system-user.dtsi \
+    file://${MACHINE}.dtsi \
     file://pl-conf.dtsi \
 "
 
@@ -11,10 +11,17 @@ SRC_URI_append_damc-fmc1z7io = " \
 
 DEPENDS_append = "${@'device-tree-from-bd' if d.getVar('DT_FROM_BD_ENABLE') == '1' else ''}"
 
-do_configure_append() {
-    # append PS config to the main file
-    echo '#include "system-user.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
+# For Z7IO, also handle the -rev-a variant
+YAML_DT_BOARD_FLAGS_damc-fmc1z7io ?= "{BOARD ${MACHINE}}"
+YAML_DT_BOARD_FLAGS_damc-fmc2zup  ?= "{BOARD damc-fmc2zup}"
+YAML_DT_BOARD_FLAGS_damc-motctrl  ?= "{BOARD damc-motctrl}"
 
+do_configure_prepend() {
+    # Inject board DTSI file into DTG tool
+    cp ${WORKDIR}/${MACHINE}.dtsi ${WORKDIR}/git/device_tree/data/kernel_dtsi/2020.2/BOARD/
+}
+
+do_configure_append() {
     if [ ${DT_FROM_BD_ENABLE} = "1" ]; then
         # copy the .dts for the app
         cp ${WORKDIR}/recipe-sysroot/opt/mtca-tech-lab/dt/app_from_bd.dts ${DT_FILES_PATH}/board_app.dtsi
