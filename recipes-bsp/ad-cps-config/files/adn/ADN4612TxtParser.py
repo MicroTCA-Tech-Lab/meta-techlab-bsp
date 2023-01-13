@@ -3,8 +3,10 @@
 import logging
 import itertools
 import time
+import sys
 
-from slcc.extra_logging import LEVEL_TRACE
+from extra_logging import LEVEL_TRACE
+
 
 class ADN4612TxtParser:
     EXP_HEADER = "# ADN4612 Registers Script"
@@ -29,7 +31,8 @@ class ADN4612TxtParser:
             next(f)
             part = next(f).strip().split(": ")[1]
             assert part in self.EXP_PART_VAL, \
-                "Part number does not match, expect %s, got %s" % (self.EXP_PART_VAL, part)
+                "Part number does not match, expect %s, got %s" % (
+                    self.EXP_PART_VAL, part)
 
             seen_header = False
             seen_postamble = False
@@ -47,9 +50,9 @@ class ADN4612TxtParser:
 
                 elif seen_header and line[0] != "#":
                     arr0 = line.split(",")
-                    reg_addr = int(arr0[0], 16)
+                    reg_addr = int(arr0[0], 0)
                     arr1 = arr0[1].split('#')
-                    val = int(arr1[0], 16)
+                    val = int(arr1[0], 0)
 
                     self.logger.log(LEVEL_TRACE,
                                     "reg: page = addr = 0x%02x, val = 0x%02x",
@@ -63,13 +66,15 @@ class ADN4612TxtParser:
 
             self.logger.info("parsing done")
 
+
 def main():
     """ Example usage, parses .txt file """
     logging.basicConfig(level=LEVEL_TRACE)
-    filename = "example.txt"
+    filename = sys.argv[1]
 
     parser = ADN4612TxtParser(filename)
     parser.parse(lambda addr, val: print(addr, val))
+
 
 if __name__ == "__main__":
     main()
