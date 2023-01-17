@@ -9,6 +9,10 @@ SRC_URI_append_damc-fmc1z7io = " \
     file://0001-Fix-address-size-32-64-bit-for-the-overlay.patch \
 "
 
+SRC_URI_append_damc-motctrl = " \
+    file://ethernet-reordering.dtsi \
+"
+
 DEPENDS_append = "${@'device-tree-from-bd' if d.getVar('DT_FROM_BD_ENABLE') == '1' else ''}"
 
 # For Z7IO, also handle the -rev-a variant
@@ -53,6 +57,11 @@ do_configure_append() {
         # append PL-related things to the main file
         echo '#include "pl-conf.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
     fi
+}
+
+do_configure_append_damc-motctrl() {
+    # To overwrite the defaults, DT aliases for the NICs have to be included at the very last
+    echo '#include "ethernet-reordering.dtsi"' >> ${DT_FILES_PATH}/system-top.dts
 }
 
 do_deploy_append_damc-fmc1z7io-rev-a() {

@@ -20,7 +20,7 @@
 // GEM1, GEM3: RGMII <--> 88E1512
 // GEM2: 1000BASE-X (no ext. PHY)
 &gem2 {
-    local-mac-address = [DE AD BE FF 01 01];
+    local-mac-address = [DE AD BE EF 01 01];
     is-internal-pcspma;
     phy-mode = "moca";
     phy-connection-type = "1000base-x";
@@ -31,6 +31,8 @@
 };
 
 &gem1 {
+    local-mac-address = [DE AD BE EF 01 02];
+
     phy-handle = <&phy0>;
 
     phy0: phy@0 {
@@ -44,6 +46,8 @@
 };
 
 &gem3 {
+    local-mac-address = [DE AD BE EF 01 03];
+
     phy-handle = <&phy1>;
 
     phy1: phy@1 {
@@ -164,13 +168,5 @@
                 reg = <0x02280000 0x05D80000>;
             };
         };
-    };
-};
-
-/ {
-    aliases {
-        ethernet0 = "/amba/ethernet@ff0d0000";
-        ethernet1 = "/amba/ethernet@ff0c0000";
-        ethernet2 = "/amba/ethernet@ff0e0000";
     };
 };

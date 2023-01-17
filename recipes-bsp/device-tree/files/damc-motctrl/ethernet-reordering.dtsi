@@ -1,0 +1,7 @@
+/ {
+    aliases {
+        ethernet0 = "/amba/ethernet@ff0d0000";
+        ethernet1 = "/amba/ethernet@ff0c0000";
+        ethernet2 = "/amba/ethernet@ff0e0000";
+    };
+};
