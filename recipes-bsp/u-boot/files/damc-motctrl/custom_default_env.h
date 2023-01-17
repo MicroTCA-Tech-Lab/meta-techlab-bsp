@@ -23,6 +23,6 @@
   "boot_net=echo DAMC-MOTCTRL QSPI/NFS boot script && run qspi_load_dtb_img && setenv bootargs root=/dev/nfs nfsroot=${nfsserver}:${nfsroot},nfsvers=3 ip=dhcp ${bootargs_common} && run kernel_start_noramdisk\0" \
   "boot_recovery=echo DAMC-MOTCTRL QSPI/initramfs boot script && run qspi_load_dtb_img && run qspi_load_ramdisk && setenv bootargs root=/dev/ram0 ${bootargs_common} && run kernel_start_ramdisk\0" \
   "nfsserver=192.168.1.92\0"            \
-  "nfsroot=/nfsroot/zup\0"             \
+  "nfsroot=/nfsroot/motctrl\0"             \
   "boot_targets=recovery\0"             \
   "distro_bootcmd=for target in ${boot_targets}; do run boot_${target}; done\0" \
