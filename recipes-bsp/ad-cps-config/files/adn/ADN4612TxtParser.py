@@ -5,7 +5,7 @@ import itertools
 import time
 import sys
 
-from extra_logging import LEVEL_TRACE
+from adn.extra_logging import LEVEL_TRACE
 
 
 class ADN4612TxtParser:

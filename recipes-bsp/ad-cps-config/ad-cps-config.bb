@@ -15,6 +15,7 @@ SRC_URI = " \
     file://adn/extra_logging.py \
     file://adn/ADN4612driver.py \
     file://adn/ADN4612TxtParser.py \
+    file://adn/DefaultI2c.py \
     file://ad-cps-init.sh \
 "
 

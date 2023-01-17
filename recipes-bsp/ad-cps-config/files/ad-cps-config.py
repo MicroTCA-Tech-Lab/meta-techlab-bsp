@@ -24,12 +24,11 @@ from adn.ADN4612driver import ADN4612driver
 from adn.ADN4612TxtParser import ADN4612TxtParser
 from adn.extra_logging import LEVEL_TRACE
 
-from i2c_bus_locator import i2c_bus_locator
+from adn.DefaultI2c import DEFAULT_I2C_BUS
+
 
 def main():
     """ Process input args, parse text file, program the device over I2C """
-
-    Z7IO_CLK_BUS = i2c_bus_locator(compat="cdns", addr=0xe0004000)[0]
 
     parser = argparse.ArgumentParser(
         description='Program AD4612 device on I2C bus')
@@ -37,7 +36,7 @@ def main():
                         help='print debug information')
     parser.add_argument('--trace', action='store_true',
                         help='print trace information (very verbose)')
-    parser.add_argument('--i2c_bus', default=Z7IO_CLK_BUS,
+    parser.add_argument('--i2c_bus', default=DEFAULT_I2C_BUS,
                         help='select I2C bus')
     parser.add_argument('i2c_addr', type=lambda x: int(x, 0),
                         help='address of the device on I2C bus')
@@ -67,6 +66,7 @@ def main():
 
     logging.log(logging.INFO, "wrote file: %s", args.filename)
     logging.log(logging.INFO, "programming done")
+
 
 if __name__ == "__main__":
     main()
