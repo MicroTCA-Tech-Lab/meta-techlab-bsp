@@ -29,7 +29,7 @@
           full-duplex;
     };
 };
-/*
+
 &gem1 {
     phy-handle = <&phy0>;
 
@@ -42,9 +42,7 @@
             <254 15 0x3fff 0>;
     };
 };
-*/
-/*
-    secondary ethernet ... include this when the first one is working
+
 &gem3 {
     phy-handle = <&phy1>;
 
@@ -57,7 +55,6 @@
             <254 15 0x3fff 0>;
     };
 };
-*/
 
 &sdhci0 {
     // WP pin is not available on microSD, not connected on the board
