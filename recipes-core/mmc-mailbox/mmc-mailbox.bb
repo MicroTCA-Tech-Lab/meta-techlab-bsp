@@ -1,8 +1,8 @@
 DESCRIPTION = "DMMC-STAMP Mailbox support"
 LICENSE = "BSD"
-PV = "0.0.1"
+PV = "1.0.1"
 
-SRCREV = "b435b73eccce4e6e88e6ec7ff20ea144596d0d8c"
+SRCREV = "2d75301d0b057505cbe27185ffdb49806f63a553"
 SRC_URI = "git://git@github.com/MicroTCA-Tech-Lab/mmc-mailbox.git;protocol=ssh"
 LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=750d848625d8174091b953f2de0e8f8e"
 
