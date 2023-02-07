@@ -47,9 +47,14 @@ do_configure_append() {
                 VAR_DTS="${WORKDIR}/recipe-sysroot/opt/mtca-tech-lab/dt/app_from_bd_${PL_VARIANT}.dts"
                 VAR_DTSI="board_app_${PL_VARIANT}.dtsi"
                 cp ${VAR_DTS} ${DT_FILES_PATH}/${VAR_DTSI}
+
                 cp ${DT_FILES_PATH}/pl.dtsi ${DT_FILES_PATH}/pl-var-${PL_VARIANT}.dtsi
                 echo '/include/ "'${VAR_DTSI}'"' >> ${DT_FILES_PATH}/pl-var-${PL_VARIANT}.dtsi
                 echo '/include/ "pl-conf.dtsi"'  >> ${DT_FILES_PATH}/pl-var-${PL_VARIANT}.dtsi
+
+                # We force the binfile name to 'pl-full.bit.bin' both here and in fpga-manager-util_%.bbappend
+                # The variants binfiles may have the same name, b/c they live in different subdirectories
+                sed -i "/^\([[:space:]]*\)firmware-name/s/\".*\.bit\.bin\"/\"pl-full.bit.bin\"/" ${DT_FILES_PATH}/pl-var-${PL_VARIANT}.dtsi
             done
             echo '/include/ "board_app.dtsi"' >> ${DT_FILES_PATH}/pl.dtsi
             echo '/include/ "pl-conf.dtsi"'   >> ${DT_FILES_PATH}/pl.dtsi
