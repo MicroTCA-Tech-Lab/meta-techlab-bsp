@@ -31,33 +31,25 @@
 };
 
 &gem1 {
-    local-mac-address = [DE AD BE EF 01 02];
-
+    local-mac-address = [17 89 12 5f e4 01];
     phy-handle = <&phy0>;
-
-    phy0: phy@0 {
-        // Marvel 88E1512
-        //   compatible string is not needed
-        reg = <0>;
+	phy0: phy@0 {
+		reg = <0x0>;
         device_type = "ethernet-phy";
         marvell,reg-init =
-            <254 15 0x3fff 0>;
-    };
+          <18 20 0xfff8 0x2>;
+	};
 };
 
 &gem3 {
-    local-mac-address = [DE AD BE EF 01 03];
-
+    local-mac-address = [17 89 12 5f e4 02];
     phy-handle = <&phy1>;
-
-    phy1: phy@1 {
-        // Marvel 88E1512
-        //   compatible string is not needed
-        reg = <0>;
+	phy1: phy@0 {
+		reg = <0x0>;
         device_type = "ethernet-phy";
         marvell,reg-init =
-            <254 15 0x3fff 0>;
-    };
+          <18 20 0xfff8 0x2>;
+	};
 };
 
 &sdhci0 {
