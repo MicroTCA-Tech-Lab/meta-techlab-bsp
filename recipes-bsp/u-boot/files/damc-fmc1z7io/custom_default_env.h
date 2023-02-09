@@ -11,7 +11,7 @@
   "kernel_addr_r=0x2000000\0"                                                  \
   "scriptaddr=0x3000000\0"                                                     \
   "ramdisk_addr_r=0x3100000\0"                                                 \
-  "bootargs_common='earlyprintk console=ttyPS0,115200 rw rootwait cpuidle.off=1 uio_pdrv_genirq.of_id=\"generic-uio\" cma=64M'\0"      \
+  "bootargs_common='earlyprintk console=ttyPS0,115200 rw rootwait cpuidle.off=1 uio_pdrv_genirq.of_id=\"generic-uio\"'\0"      \
   "sd_load_dtb_uimg=fatload mmc 0 ${fdt_addr_r} damc-fmc1z7io-system.dtb && fatload mmc 0 ${kernel_addr_r} uImage\0"                   \
   "emmc_load_dtb_uimg=fatload mmc 1 ${fdt_addr_r} damc-fmc1z7io-system.dtb && fatload mmc 1 ${kernel_addr_r} uImage\0"                   \
   "qspi_load_dtb_uimg=sf probe 0 0 0 && sf read ${fdt_addr_r} 0x00240000 0x00040000 && sf read ${kernel_addr_r} 0x00280000 0x800000\0" \
