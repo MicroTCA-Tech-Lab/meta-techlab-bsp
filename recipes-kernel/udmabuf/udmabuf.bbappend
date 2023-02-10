@@ -1,1 +1,0 @@
-module_conf_u-dma-buf_damc1z7io = "options u_dma_buf udmabuf0=0x2000000"
