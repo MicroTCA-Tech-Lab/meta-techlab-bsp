@@ -34,7 +34,10 @@
         reg = <0>;
         device_type = "ethernet-phy";
         marvell,reg-init =
-            <254 15 0x3fff 0>;
+            <254 15 0x3fff 0>,
+            // Set Fiber Auto-Negotiation Advertisement Register to 1000BASE-X Full-Duplex *only*
+            // Needed for kernel 5.10
+            <1 4 0x0000 0x0020>;
     };
 };
 
