@@ -1,0 +1,38 @@
+From 7262daf67d3fddba8f6187b328e4ca6a0da38367 Mon Sep 17 00:00:00 2001
+From: Patrick Huesmann <patrick.huesmann@desy.de>
+Date: Thu, 16 Feb 2023 09:46:57 +0100
+Subject: [PATCH] Allow reading the ZynqMP IDCODE
+
+---
+ drivers/nvmem/zynqmp_nvmem.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/drivers/nvmem/zynqmp_nvmem.c b/drivers/nvmem/zynqmp_nvmem.c
+index 9a939e441667..2a97a853119a 100644
+--- a/drivers/nvmem/zynqmp_nvmem.c
++++ b/drivers/nvmem/zynqmp_nvmem.c
+@@ -157,6 +157,21 @@ static int zynqmp_nvmem_read(void *context, unsigned int offset,
+ 		pr_debug("Read chipid val %x %x\n", idcode, version);
+ 		*(int *)val = version & SILICON_REVISION_MASK;
+ 		break;
++
++	/* Offsets 0x04 ... 0x0c are unused and would return 0xdeadbeef
++	   We "hijack" the unused offset 0x04 to allow reading the IDCODE. */
++	case 0x04:
++		if (bytes != SOC_VER_SIZE)
++			return -EOPNOTSUPP;
++
++		ret = zynqmp_pm_get_chipid((u32 *)&idcode, (u32 *)&version);
++		if (ret < 0)
++			return ret;
++
++		pr_debug("Read chipid val %x %x\n", idcode, version);
++		*(int *)val = idcode;
++		break;
++
+ 	/* Efuse offset starts from 0xc */
+ 	case EFUSE_START_OFFSET ... EFUSE_END_OFFSET:
+ 	case EFUSE_PUF_START_OFFSET ... EFUSE_PUF_END_OFFSET:
+-- 
+2.39.1
+
