@@ -22,7 +22,7 @@ YAML_DT_BOARD_FLAGS_damc-motctrl  ?= "{BOARD damc-motctrl}"
 
 do_configure_prepend() {
     # Inject board DTSI file into DTG tool
-    cp ${WORKDIR}/${MACHINE}.dtsi ${WORKDIR}/git/device_tree/data/kernel_dtsi/2020.2/BOARD/
+    cp ${WORKDIR}/${MACHINE}.dtsi ${WORKDIR}/git/device_tree/data/kernel_dtsi/${XILINX_VER_MAIN}/BOARD/
 }
 
 do_configure_append() {

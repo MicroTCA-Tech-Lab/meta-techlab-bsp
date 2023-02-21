@@ -1,10 +1,6 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
-SRC_URI_append = " \
-	file://mac-addr.cfg \
-	file://env.cfg \
-	file://custom_default_env.h \
-"
+# TODO: Port to 2021.1
 
 SRC_URI_append_damc-fmc2zup = " \
 	file://0001-Revert-arm64-zynqmp-Remove-all-Xilinx-private-comman.patch \
