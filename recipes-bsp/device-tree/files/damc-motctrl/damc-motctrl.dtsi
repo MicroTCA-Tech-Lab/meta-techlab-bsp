@@ -15,6 +15,14 @@
             gpios = <&gpio 8 GPIO_ACTIVE_HIGH>;
         };
     };
+
+/* 50MHz reference crystal Y2 */
+ref50: ref50M
+    {
+        compatible = "fixed-clock";
+		#clock-cells = <0>;
+        clock-frequency = <50000000>;
+    };
 };
 
 // GEM1, GEM3: RGMII <--> 88E1512
@@ -80,28 +88,27 @@
 };
 
 &i2c0 { // MIO6 / 7
-/*
-    eeprom_mac: eeprom@50 {
-        compatible = "atmel,24c02";
-        reg = <0x50>;
-        pagesize = <16>;
+    
+    si5341: clock-generator@76 { /* SI5341-U29 */
+        compatible = "silabs,si5341";
+        reg = <0x76>;
+        #clock-cells = <2>;
+        #address-cells = <1>;
+        #size-cells = <0>;
+        clocks = <&ref50>;
+        clock-names = "xtal";
+        clock-output-names = "si5341";
     };
-*/
-// CPS (s. Z7IO)
-// s. CLK I2C in schematic
-/*
-    si570_mgt_lll: clock-generator@5d {
-        #clock-cells = <0>;
-        compatible = "silabs,si570";
-        temperature-stability = <50>;
-        reg = <0x55>;
-        factory-fout = <125000000>;
-        clock-frequency = <156250000>;
-        clock-output-names = "si570_mgt_lll";
-    };
-*/
-    /* Si Labs at 0x76, 0x77 are handled by a separate script */
+
+    /*
+        eeprom_mac: eeprom@50 {
+            compatible = "atmel,24c02";
+            reg = <0x50>;
+            pagesize = <16>;
+        };
+    */   
 };
+
 /*
 &eeprom_mac  {
     #address-cells = <1>;
