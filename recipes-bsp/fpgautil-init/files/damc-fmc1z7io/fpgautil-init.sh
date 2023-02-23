@@ -36,5 +36,5 @@ get_chip_variant() {
 get_chip_variant
 
 echo "${scriptname}: Downloading FPGA image"
-fpgautil -b /lib/firmware/base/${chip_variant}/damc_fmc1z7io_top.bit.bin -o /lib/firmware/base/${chip_variant}/base.dtbo
+fpgautil -b /lib/firmware/xilinx/base/${chip_variant}/damc_fmc1z7io_top.bit.bin -o /lib/firmware/xilinx/base/${chip_variant}/base.dtbo
 echo "${scriptname}: FPGA image download done"

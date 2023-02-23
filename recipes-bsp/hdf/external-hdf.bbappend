@@ -42,3 +42,9 @@ python () {
 }
 
 FILES_${PN} += "${PL_VARIANT_FILES}"
+
+# Override "do_install[noexec]" from upstream
+# TODO: Is this still necessary when dependencies are properly declared?
+python __anonymous() {
+  d.delVarFlag('do_install', 'noexec')
+}
