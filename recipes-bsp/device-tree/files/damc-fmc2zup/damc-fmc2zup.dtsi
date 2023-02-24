@@ -93,16 +93,15 @@
 };
 
 
-/* TODO: Has to be patched for 2021.1:
-   "Reference to non-existent node or label "lane2"
 &dwc3_0 {
     dr_mode = "host";
     snps,usb3_lpm_capable;
     phy-names = "usb3-phy";
-    phys = <&lane2 PHY_TYPE_USB3 0 2 26000000>;
+
+    /* arg0..3: lane number, PHY type, PHY instance, refclock number */
+    phys = <&psgtr 2 PHY_TYPE_USB3 0 2>; 
     maximum-speed = "super-speed";
 };
-*/
 
 // copied from ZCU104
 // and https://www.zachpfeffer.com/single-post/Integrate-a-QSPI-using-PetaLinux-Tools-Part-2
