@@ -3,6 +3,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI_append_damc-fmc2zup = " \
 	file://usb.cfg \
 	file://fpga-debugfs.cfg \
+	file://mtd_spi_nor.cfg \
     file://0001-Allow-reading-the-ZynqMP-IDCODE_${LINUX_VERSION}.patch \
 "
 

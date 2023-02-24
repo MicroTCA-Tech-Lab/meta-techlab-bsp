@@ -113,8 +113,9 @@
         #address-cells = <1>;
         #size-cells = <1>;
         reg = <0x0>;
-        spi-tx-bus-width = <4>;
-        spi-rx-bus-width = <4>;
+        // Kernel 5.10 cannot access the flash in quad mode for some reason
+        spi-tx-bus-width = <1>;
+        spi-rx-bus-width = <1>;
         spi-max-frequency = <50000000>;
         partitions {
             compatible = "fixed-partitions";
