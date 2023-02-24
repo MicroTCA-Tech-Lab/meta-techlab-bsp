@@ -23,6 +23,18 @@
             gpios = <&gpio 23 GPIO_ACTIVE_HIGH>;
         };
     };
+
+    psgtr_refclk0: oscillator1 {
+        compatible = "fixed-clock";
+        #clock-cells = <0>;
+        clock-frequency  = <27000000>;
+    };
+
+    psgtr_refclk2: oscillator2 {
+        compatible = "fixed-clock";
+        #clock-cells = <0>;
+        clock-frequency  = <26000000>;
+    };
 };
 
 &gem3 {
@@ -92,6 +104,10 @@
     };
 };
 
+&psgtr {
+	clocks = <&psgtr_refclk0>, <&psgtr_refclk2>;
+	clock-names = "ref0", "ref2";
+};
 
 &dwc3_0 {
     dr_mode = "host";
@@ -102,6 +118,13 @@
     phys = <&psgtr 2 PHY_TYPE_USB3 0 2>; 
     maximum-speed = "super-speed";
 };
+
+/*
+&zynqmp_dpsub {
+	phy-names = "dp-phy0", "dp-phy1";
+	phys = <&psgtr 3 PHY_TYPE_DP 0 0>, <&psgtr 2 PHY_TYPE_DP 1 0>;
+};
+*/
 
 // copied from ZCU104
 // and https://www.zachpfeffer.com/single-post/Integrate-a-QSPI-using-PetaLinux-Tools-Part-2
