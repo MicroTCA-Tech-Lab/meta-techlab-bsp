@@ -1,0 +1,45 @@
+From cfb8a344de271d6e4ca77b09dd774b252bdec3cd Mon Sep 17 00:00:00 2001
+From: Patrick Huesmann <info@patrick-huesmann.de>
+Date: Fri, 24 Feb 2023 08:33:07 +0100
+Subject: [PATCH 2/2] zynq: Use fixed env location depending on build-time
+ config
+
+U-Boot would freeze if the env location matching the boot source was not enabled. Also we want to have a single env per board, not one for each boot source
+---
+ board/xilinx/zynq/board.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/board/xilinx/zynq/board.c b/board/xilinx/zynq/board.c
+index 6cd4f7698f..7e4e897b86 100644
+--- a/board/xilinx/zynq/board.c
++++ b/board/xilinx/zynq/board.c
+@@ -127,6 +127,20 @@ enum env_location env_get_location(enum env_operation op, int prio)
+ 	if (prio)
+ 		return ENVL_UNKNOWN;
+ 
++	if (IS_ENABLED(CONFIG_ENV_IS_IN_SPI_FLASH))
++		return ENVL_SPI_FLASH;
++	else if (IS_ENABLED(CONFIG_ENV_IS_IN_FAT))
++		return ENVL_FAT;
++	else if (IS_ENABLED(CONFIG_ENV_IS_IN_EXT4))
++		return ENVL_EXT4;
++	else if (IS_ENABLED(CONFIG_ENV_IS_IN_NAND))
++		return ENVL_NAND;
++	else if (IS_ENABLED(CONFIG_ENV_IS_IN_UBI))
++		return ENVL_UBI;
++	else
++		return ENVL_NOWHERE;
++
++#if 0
+ 	switch (bootmode) {
+ 	case ZYNQ_BM_SD:
+ 		if (IS_ENABLED(CONFIG_ENV_IS_IN_FAT))
+@@ -149,4 +163,5 @@ enum env_location env_get_location(enum env_operation op, int prio)
+ 	default:
+ 		return ENVL_NOWHERE;
+ 	}
++#endif
+ }
+-- 
+2.39.1
+
