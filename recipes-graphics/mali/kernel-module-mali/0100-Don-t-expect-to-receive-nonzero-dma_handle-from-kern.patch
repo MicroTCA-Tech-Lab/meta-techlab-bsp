@@ -1,0 +1,63 @@
+From 3d6571be3e58afc19603f58099e7cb4f3557353e Mon Sep 17 00:00:00 2001
+From: Patrick Huesmann <patrick.huesmann@desy.de>
+Date: Mon, 27 Feb 2023 17:26:49 +0100
+Subject: [PATCH] Don't expect to receive nonzero dma_handle from kernel
+
+Fixes "Failed to get table page for empty pgdir" error
+---
+ driver/src/devicedrv/mali/common/mali_mmu.c                | 2 +-
+ driver/src/devicedrv/mali/common/mali_mmu_page_directory.c | 4 ++--
+ driver/src/devicedrv/mali/common/mali_mmu_page_directory.h | 2 ++
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/driver/src/devicedrv/mali/common/mali_mmu.c b/driver/src/devicedrv/mali/common/mali_mmu.c
+index 6e8ea32..3d055f0 100644
+--- common/mali_mmu.c
++++ b/common/mali_mmu.c
+@@ -61,7 +61,7 @@ _mali_osk_errcode_t mali_mmu_initialize(void)
+ {
+ 	/* allocate the helper pages */
+ 	mali_empty_page_directory_phys = mali_allocate_empty_page(&mali_empty_page_directory_virt);
+-	if (0 == mali_empty_page_directory_phys) {
++	if (EMPTY_PG_ERR == mali_empty_page_directory_phys) {
+ 		MALI_DEBUG_PRINT_ERROR(("Mali MMU: Could not allocate empty page directory.\n"));
+ 		mali_empty_page_directory_phys = MALI_INVALID_PAGE;
+ 		return _MALI_OSK_ERR_NOMEM;
+diff --git a/driver/src/devicedrv/mali/common/mali_mmu_page_directory.c b/driver/src/devicedrv/mali/common/mali_mmu_page_directory.c
+index 45d7f06..0400d97 100644
+--- common/mali_mmu_page_directory.c
++++ b/common/mali_mmu_page_directory.c
+@@ -27,7 +27,7 @@ u32 mali_allocate_empty_page(mali_io_address *virt_addr)
+ 	if (_MALI_OSK_ERR_OK != mali_mmu_get_table_page(&address, &mapping)) {
+ 		/* Allocation failed */
+ 		MALI_DEBUG_PRINT(2, ("Mali MMU: Failed to get table page for empty pgdir\n"));
+-		return 0;
++		return EMPTY_PG_ERR;
+ 	}
+ 
+ 	MALI_DEBUG_ASSERT_POINTER(mapping);
+@@ -36,7 +36,7 @@ u32 mali_allocate_empty_page(mali_io_address *virt_addr)
+ 	if (_MALI_OSK_ERR_OK != err) {
+ 		mali_mmu_release_table_page(address, mapping);
+ 		MALI_DEBUG_PRINT(2, ("Mali MMU: Failed to zero page\n"));
+-		return 0;
++		return EMPTY_PG_ERR;
+ 	}
+ 
+ 	*virt_addr = mapping;
+diff --git a/driver/src/devicedrv/mali/common/mali_mmu_page_directory.h b/driver/src/devicedrv/mali/common/mali_mmu_page_directory.h
+index 6243879..a823752 100644
+--- common/mali_mmu_page_directory.h
++++ b/common/mali_mmu_page_directory.h
+@@ -91,6 +91,8 @@ _mali_osk_errcode_t mali_mmu_pagedir_unmap(struct mali_page_directory *pagedir,
+ void mali_mmu_pagedir_update(struct mali_page_directory *pagedir, u32 mali_address,
+ 			     mali_dma_addr phys_address, u32 size, u32 permission_bits);
+ 
++// Use 0xffffffff as error code, b/c zero is a valid value for `dma_handle`
++#define EMPTY_PG_ERR 0xffffffff
+ u32 mali_allocate_empty_page(mali_io_address *virtual);
+ void mali_free_empty_page(mali_dma_addr address, mali_io_address virt_addr);
+ _mali_osk_errcode_t mali_create_fault_flush_pages(mali_dma_addr *page_directory,
+-- 
+2.39.1
+
