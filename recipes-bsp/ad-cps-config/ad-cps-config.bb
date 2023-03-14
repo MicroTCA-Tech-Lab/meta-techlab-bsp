@@ -3,7 +3,7 @@ COMPATIBLE_MACHINE = "(damc-fmc1z7io|damc-motctrl)"
 DESCRIPTION = "Configuration tool for AD CPS on I2C bus"
 LICENSE = "CLOSED"
 PV = "1.3"
-PR = "r1"
+PR = "r2"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
@@ -31,6 +31,7 @@ SRC_URI_append_damc-fmc1z7io-rev-b = " \
     file://example_config/z7io_0x44_cps_fmc_dp0_dp1.txt \
     file://example_config/z7io_0x44_cps_bp_llc0_llc1.txt \
     file://example_config/z7io_0x44_cps_bp_llc2_llc3.txt \
+    file://example_config/z7io_0x44_cps_bp_llc0_llc1_llc2_llc3.txt \
     file://example_config/z7io_0x44_cps_bp_pcie_x4.txt \
 "
 
@@ -59,10 +60,12 @@ FILES_${PN}_append_damc-fmc1z7io-rev-b = " \
     /opt/mtca-tech-lab/damc-fmc1z7io/cps_config/0x44_fmc_dp0_dp1.txt \
     /opt/mtca-tech-lab/damc-fmc1z7io/cps_config/0x44_llc0_llc1.txt \
     /opt/mtca-tech-lab/damc-fmc1z7io/cps_config/0x44_llc2_llc3.txt \
+    /opt/mtca-tech-lab/damc-fmc1z7io/cps_config/0x44_llc0_llc1_llc2_llc3.txt \
     /opt/mtca-tech-lab/damc-fmc1z7io/cps_config/0x44_pcie_x4.txt \
     /opt/mtca-tech-lab/damc-fmc1z7io/cps_config/z7io_0x44_cps_fmc_dp0_dp1.txt \
     /opt/mtca-tech-lab/damc-fmc1z7io/cps_config/z7io_0x44_cps_bp_llc0_llc1.txt \
     /opt/mtca-tech-lab/damc-fmc1z7io/cps_config/z7io_0x44_cps_bp_llc2_llc3.txt \
+    /opt/mtca-tech-lab/damc-fmc1z7io/cps_config/z7io_0x44_cps_bp_llc0_llc1_llc2_llc3.txt \
     /opt/mtca-tech-lab/damc-fmc1z7io/cps_config/z7io_0x44_cps_bp_pcie_x4.txt \
 "
 
@@ -96,12 +99,14 @@ do_install_append_damc-fmc1z7io-rev-b() {
     install -m 0644 ${WORKDIR}/example_config/z7io_0x44_cps_fmc_dp0_dp1.txt  ${CONFDIR}
     install -m 0644 ${WORKDIR}/example_config/z7io_0x44_cps_bp_llc0_llc1.txt ${CONFDIR}
     install -m 0644 ${WORKDIR}/example_config/z7io_0x44_cps_bp_llc2_llc3.txt ${CONFDIR}
+    install -m 0644 ${WORKDIR}/example_config/z7io_0x44_cps_bp_llc0_llc1_llc2_llc3.txt ${CONFDIR}
     install -m 0644 ${WORKDIR}/example_config/z7io_0x44_cps_bp_pcie_x4.txt   ${CONFDIR}
 
     # configs are symbolic links so that other applications can overwrite them
     ln -s -r ${CONFDIR}/z7io_0x44_cps_fmc_dp0_dp1.txt  ${CONFDIR}/0x44_fmc_dp0_dp1.txt
     ln -s -r ${CONFDIR}/z7io_0x44_cps_bp_llc0_llc1.txt ${CONFDIR}/0x44_llc0_llc1.txt
     ln -s -r ${CONFDIR}/z7io_0x44_cps_bp_llc2_llc3.txt ${CONFDIR}/0x44_llc2_llc3.txt
+    ln -s -r ${CONFDIR}/z7io_0x44_cps_bp_llc0_llc1_llc2_llc3.txt ${CONFDIR}/0x44_llc0_llc1_llc2_llc3.txt
     ln -s -r ${CONFDIR}/z7io_0x44_cps_bp_pcie_x4.txt   ${CONFDIR}/0x44_pcie_x4.txt
 }
 
