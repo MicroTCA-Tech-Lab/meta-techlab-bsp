@@ -1,0 +1,10 @@
+&iic_axi_iic_mmc {
+  compatible = "xlnx,axi-iic-2.0", "xlnx,xps-iic-2.00.a";
+  clock-names = "s_axi_aclk";
+  clocks = <&zynqmp_clk 71>;
+
+  mmcmailbox@2a {
+      compatible = "desy,mmcmailbox";
+      reg = <0x2a>;
+  };
+};
