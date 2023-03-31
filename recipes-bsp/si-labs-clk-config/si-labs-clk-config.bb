@@ -12,6 +12,7 @@ S = "${WORKDIR}"
 SRC_URI = " \
     file://setup.py \
     file://si-labs-clk-config.py \
+    file://si-labs-clk-info.py \
     file://slcc/BoardConfig.py \
     file://slcc/extra_logging.py \
     file://slcc/Si534xdriver.py \

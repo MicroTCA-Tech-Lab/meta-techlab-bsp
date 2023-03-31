@@ -3,7 +3,7 @@ setup(
     name="si-labs-clk-config",
     version="1.3",
     packages=["slcc"],
-    scripts=["si-labs-clk-config.py"],
+    scripts=["si-labs-clk-config.py", "si-labs-clk-info.py"],
 
     install_requires=["smbus"],
 

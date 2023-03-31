@@ -12,6 +12,7 @@ from slcc.extra_logging import LEVEL_TRACE
 LEVEL_TRACE = logging.DEBUG-5
 logging.addLevelName(LEVEL_TRACE, 'TRACE')
 
+
 class Si534xdriver:
     """ Si5340/1 clock generator configuration over I2C
 
@@ -51,18 +52,22 @@ class Si534xdriver:
 
         self._check_device()
 
-    def _check_device(self):
-        """ Check if the device is Si5341 - part of the init """
-
-        self.logger.debug("_check_device called")
-
+    def _get_pn(self):
+        """ Check that the Si5341 device is supported & return part number"""
         pn0 = self.rd(self.REG_ADDR_PN_BASE0)
         pn1 = self.rd(self.REG_ADDR_PN_BASE1)
         pn_base = struct.unpack("H", struct.pack("BB", pn0, pn1))[0]
         assert pn_base in self.EXPECTED_PN_BASE, \
             "Unrecognized Part Number, expected %04x, got %04x" % \
             (self.EXPECTED_PN_BASE, pn_base)
+        return pn_base
 
+    def _check_device(self):
+        """ Check if the device is Si5341 - part of the init """
+
+        self.logger.debug("_check_device called")
+
+        pn_base = self._get_pn()
         grade = self.rd(self.REG_ADDR_GRADE)
         device_rev = self.rd(self.REG_ADDR_DEVICE_REV)
         temp_grade = self.rd(self.REG_ADDR_TEMP_GRADE)
@@ -78,6 +83,12 @@ class Si534xdriver:
         self.logger.info("  temp grade: %s", temp_grade_str)
         self.logger.info("  package id: %s", pkg_id_str)
 
+    def get_rev(self):
+        """ Get Si5341 device revision """
+        self._get_pn()
+        device_rev = self.rd(self.REG_ADDR_DEVICE_REV)
+        return chr(ord("A")+device_rev)
+
     def _set_page(self, page: int):
         self.logger.log(LEVEL_TRACE, "setting page to %d", page)
         self.bus.write_byte_data(self.addr, self.REG_ADDR_PAGE, page)
@@ -89,7 +100,8 @@ class Si534xdriver:
             self._set_page(addr[1])
         self.bus.write_byte(self.addr, addr[0])
         b = self.bus.read_byte(self.addr)
-        self.logger.log(LEVEL_TRACE, "read: addr = %02x, data = %02x", addr[0], b)
+        self.logger.log(
+            LEVEL_TRACE, "read: addr = %02x, data = %02x", addr[0], b)
         return b
 
     def wr(self, addr: Tuple[int, int], val: int):
@@ -97,7 +109,8 @@ class Si534xdriver:
         if self.cur_page != addr[1]:
             self._set_page(addr[1])
         self.bus.write_byte_data(self.addr, addr[0], val)
-        self.logger.log(LEVEL_TRACE, "write: addr = %02x, data = %02x", addr[0], val)
+        self.logger.log(
+            LEVEL_TRACE, "write: addr = %02x, data = %02x", addr[0], val)
 
 
 def main():
@@ -111,6 +124,7 @@ def main():
     clk_bus = smbus.SMBus(Z7IO_CLK_BUS)
     si5341 = Si5341driver(clk_bus, Z7IO_SI5341_PL_ADDR)
     si5341._check_device()  # pylint: disable=protected-access
+
 
 if __name__ == "__main__":
     main()
