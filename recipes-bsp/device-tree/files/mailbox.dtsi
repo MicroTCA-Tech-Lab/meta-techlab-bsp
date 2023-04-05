@@ -1,0 +1,6 @@
+&iic_axi_iic_mmc {
+  mmcmailbox@2a {
+      compatible = "desy,mmcmailbox";
+      reg = <0x2a>;
+  };
+};

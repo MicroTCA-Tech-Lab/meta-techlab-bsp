@@ -3,10 +3,13 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI_append = " \
     file://${MACHINE}.dtsi \
     file://pl-conf.dtsi \
+    file://mailbox.dtsi \
 "
 
 SRC_URI_append_damc-fmc1z7io = " \
     file://0001-Fix-address-size-32-64-bit-for-the-overlay.patch \
+    file://quad-spi.dtsi \
+    file://hdmi.dtsi \
 "
 
 SRC_URI_append_damc-motctrl = " \
