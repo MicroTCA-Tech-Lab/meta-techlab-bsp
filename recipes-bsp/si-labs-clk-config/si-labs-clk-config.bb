@@ -32,10 +32,14 @@ SRC_URI_append_damc-fmc1z7io-rev-a = " \
     file://example_config/z7io_0x77_out1_200_00_out2_200_00.txt \
 "
 
+# Machine "damc-fmc1z7io-rev-b" also includes support for Rev.C!
 SRC_URI_append_damc-fmc1z7io-rev-b = " \
     file://example_config/z7io_revB_0x75_mgtpll_out1_156_25_out2_156_25.txt \
     file://example_config/z7io_revB_0x76_mainpll_out1_200_00_out2_156_25.txt \
     file://example_config/z7io_revB_0x77_rtmpll_out1_200_00_out2_200_00.txt \
+    file://example_config/z7io_revC_0x75_mgtpll_out1_156_25_out2_156_25.txt \
+    file://example_config/z7io_revC_0x76_mainpll_out1_200_00_out2_156_25.txt \
+    file://example_config/z7io_revC_0x77_rtmpll_out1_200_00_out2_200_00.txt \
 "
 
 RDEPENDS_${PN} = "python3 python3-smbus i2c-bus-locator"
@@ -62,6 +66,7 @@ FILES_${PN}_append_damc-fmc1z7io-rev-a = " \
     ${SLCC_BASE_DIR}/z7io_0x77_out1_200_00_out2_200_00.txt \
 "
 
+# Machine "damc-fmc1z7io-rev-b" also includes support for Rev.C!
 FILES_${PN}_append_damc-fmc1z7io-rev-b = " \
     ${SLCC_BASE_DIR}/0x75_mgt_pll.txt \
     ${SLCC_BASE_DIR}/0x76_main_pll.txt \
@@ -69,6 +74,9 @@ FILES_${PN}_append_damc-fmc1z7io-rev-b = " \
     ${SLCC_BASE_DIR}/z7io_revB_0x75_mgtpll_out1_156_25_out2_156_25.txt \
     ${SLCC_BASE_DIR}/z7io_revB_0x76_mainpll_out1_200_00_out2_156_25.txt \
     ${SLCC_BASE_DIR}/z7io_revB_0x77_rtmpll_out1_200_00_out2_200_00.txt \
+    ${SLCC_BASE_DIR}/z7io_revC_0x75_mgtpll_out1_156_25_out2_156_25.txt \
+    ${SLCC_BASE_DIR}/z7io_revC_0x76_mainpll_out1_200_00_out2_156_25.txt \
+    ${SLCC_BASE_DIR}/z7io_revC_0x77_rtmpll_out1_200_00_out2_200_00.txt \
 "
 
 do_install_append_damc-fmc2zup() {
@@ -97,17 +105,18 @@ do_install_append_damc-fmc1z7io-rev-a() {
     ln -s z7io_0x77_out1_200_00_out2_200_00.txt  ${SLCC_INSTALL_DIR}/0x77_rtm.txt
 }
 
+# Machine "damc-fmc1z7io-rev-b" also includes support for Rev.C!
 do_install_append_damc-fmc1z7io-rev-b() {
     SLCC_INSTALL_DIR=${D}${base_prefix}${SLCC_BASE_DIR}
     install -d ${SLCC_INSTALL_DIR}
+
     install -m 0644 ${S}/example_config/z7io_revB_0x75_mgtpll_out1_156_25_out2_156_25.txt  ${SLCC_INSTALL_DIR}
     install -m 0644 ${S}/example_config/z7io_revB_0x76_mainpll_out1_200_00_out2_156_25.txt ${SLCC_INSTALL_DIR}
     install -m 0644 ${S}/example_config/z7io_revB_0x77_rtmpll_out1_200_00_out2_200_00.txt  ${SLCC_INSTALL_DIR}
 
-    # configs are symbolic links so that other applications can overwrite them
-    ln -s z7io_revB_0x75_mgtpll_out1_156_25_out2_156_25.txt  ${SLCC_INSTALL_DIR}/0x75_mgt_pll.txt
-    ln -s z7io_revB_0x76_mainpll_out1_200_00_out2_156_25.txt ${SLCC_INSTALL_DIR}/0x76_main_pll.txt
-    ln -s z7io_revB_0x77_rtmpll_out1_200_00_out2_200_00.txt  ${SLCC_INSTALL_DIR}/0x77_rtm_pll.txt
+    install -m 0644 ${S}/example_config/z7io_revC_0x75_mgtpll_out1_156_25_out2_156_25.txt  ${SLCC_INSTALL_DIR}
+    install -m 0644 ${S}/example_config/z7io_revC_0x76_mainpll_out1_200_00_out2_156_25.txt ${SLCC_INSTALL_DIR}
+    install -m 0644 ${S}/example_config/z7io_revC_0x77_rtmpll_out1_200_00_out2_200_00.txt  ${SLCC_INSTALL_DIR}
 }
 
 do_install_append() {
