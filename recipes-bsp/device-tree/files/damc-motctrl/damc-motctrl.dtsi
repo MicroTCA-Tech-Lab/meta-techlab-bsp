@@ -87,19 +87,8 @@ ref50: ref50M
     };
 };
 
-&i2c0 { // MIO6 / 7
-    
-    si5341: clock-generator@76 { /* SI5341-U29 */
-        compatible = "silabs,si5341";
-        reg = <0x76>;
-        #clock-cells = <2>;
-        #address-cells = <1>;
-        #size-cells = <0>;
-        clocks = <&ref50>;
-        clock-names = "xtal";
-        clock-output-names = "si5341";
-    };
 
+&i2c0 { // MIO6 / 7 
     /*
         eeprom_mac: eeprom@50 {
             compatible = "atmel,24c02";
