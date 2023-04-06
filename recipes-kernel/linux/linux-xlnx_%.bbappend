@@ -16,7 +16,6 @@ SRC_URI_append_damc-fmc1z7io = " \
 "
 
 SRC_URI_append_damc-motctrl = " \
-    file://si5341_driver_enable.cfg \
     file://usb.cfg \
     file://fpga-debugfs.cfg \
     file://0001-Allow-reading-the-ZynqMP-IDCODE_${LINUX_VERSION}.patch \
