@@ -1,0 +1,7 @@
+&cpld_interface_axi_quad_spi_0 {
+    cpld_io: spidev@0 {
+        compatible = "spidev";
+        reg = <0x0>;
+        spi-max-frequency = <25000000>;
+    };
+};
