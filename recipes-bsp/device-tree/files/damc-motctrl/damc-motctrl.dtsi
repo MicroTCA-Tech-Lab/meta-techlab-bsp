@@ -108,6 +108,7 @@ ref50: ref50M
     };
 };
 */
+
 /*
 &dwc3_0 {
     status = "okay";
@@ -118,6 +119,69 @@ ref50: ref50M
     maximum-speed = "super-speed";
 };
 */
+
+/*
+
+		usb0@ff9d0000 {
+                        #address-cells = <0x02>;
+                        #size-cells = <0x02>;
+                        status = "okay";
+                        compatible = "xlnx,zynqmp-dwc3";
+                        reg = <0x00 0xff9d0000 0x00 0x100>;
+                        clock-names = "bus_clk\0ref_clk";
+                        power-domains = <0x0c 0x16>;
+                        ranges;
+                        nvmem-cells = <0x12>;
+                        nvmem-cell-names = "soc_revision";
+                        clocks = <0x03 0x20 0x03 0x22>;
+                        xlnx,tz-nonsecure = <0x01>;
+                        xlnx,usb-polarity = <0x01>;
+                        xlnx,usb-reset-io = <0x0a>;
+                        xlnx,usb-reset-mode = <0x02>;
+                        phandle = <0x6a>;
+
+                        dwc3@fe200000 {
+                                compatible = "snps,dwc3";
+                                status = "okay";
+                                reg = <0x00 0xfe200000 0x00 0x40000>;
+                                interrupt-parent = <0x04>;
+                                interrupt-names = "dwc_usb3\0otg\0hiber";
+                                interrupts = <0x00 0x41 0x04 0x00 0x45 0x04 0x00 0x4b 0x04>;
+                                #stream-id-cells = <0x01>;
+                                iommus = <0x0d 0x860>;
+                                snps,quirk-frame-length-adjustment = <0x20>;
+                                snps,refclk_fladj;
+                                snps,enable_guctl1_resume_quirk;
+                                snps,enable_guctl1_ipd_quirk;
+                                snps,xhci-stream-quirk;
+                                maximum-speed = "high-speed";
+                                snps,dis_u2_susphy_quirk;
+                                snps,dis_u3_susphy_quirk;
+                                phandle = <0x6b>;
+                        };
+                };
+
+*/
+
+
+&usb0 {
+	status = "okay";
+        /delete-property/ clocks;
+	/delete-property/ clock-names;
+	clocks = <0x3 0x21>;
+	clock-names = "bus_clk";
+};
+
+&dwc3_0 {
+        maximum-speed = "high-speed";
+        //snps,dis_u2_susphy_quirk;
+        //snps,dis_u3_susphy_quirk;
+        snps,usb3_lpm_capable;
+        phy-names = "usb2-phy";
+	status = "okay";
+        dr_mode = "host";
+};
+
 
 // copied from ZCU104
 // and https://www.zachpfeffer.com/single-post/Integrate-a-QSPI-using-PetaLinux-Tools-Part-2
