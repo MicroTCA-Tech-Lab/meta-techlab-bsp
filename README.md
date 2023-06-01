@@ -66,3 +66,24 @@ To create a xz-compressed SD card image, enter (from the BitBake environment):
 ```bash
 wic create sdimage-bootpart -e <image-name> -c xz --no-fstab-update
 ```
+
+## Shell alias for wic
+
+With a shell alias, the `wic` invocation can be simplified and it's also possible to pass options to `xz` to speed up the process.
+
+Append this snippet to `~/.bashrc` or `~/.zshrc`:
+
+```bash
+wic_img() {
+    # wic_img <compression_level> <image_name>
+    # compression_level: -0 for no compression, -9 for max compression
+    # image_name: Yocto image name
+    #
+    # e.g.: wic_img -6 zcu102-image-gigev-full
+
+    export XZ_DEFAULTS="--threads=0 $1"
+    wic create sdimage-bootpart -e $2 -c xz --no-fstab-update
+}
+```
+
+`--threads=0` will use all available processor cores and `-0`..`-9` controls the compression level.
