@@ -2,6 +2,7 @@
 #include "dt-bindings/gpio/gpio.h"
 #include "dt-bindings/phy/phy.h"
 #include "dt-bindings/dma/axi-dmac.h"
+#include "pcie-mem.dtsi"
 
 / {
     chosen {

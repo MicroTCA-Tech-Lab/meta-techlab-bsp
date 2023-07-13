@@ -10,6 +10,7 @@ SRC_URI_append_damc-fmc1z7io = " \
     file://0001-Fix-address-size-32-64-bit-for-the-overlay.patch \
     file://quad-spi.dtsi \
     file://hdmi.dtsi \
+    file://pcie-mem.dtsi \
 "
 
 SRC_URI_append_damc-motctrl = " \

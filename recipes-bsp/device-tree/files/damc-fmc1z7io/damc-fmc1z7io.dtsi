@@ -2,6 +2,7 @@
 #include "dt-bindings/gpio/gpio.h"
 #include "dt-bindings/phy/phy.h"
 #include "dt-bindings/dma/axi-dmac.h"
+#include "pcie-mem.dtsi"
 
 / {
     chosen {
@@ -24,17 +25,6 @@
         reg = <0xe0002000 0x1000>;
         view-port=<0x170>;
         drv-vbus;
-    };
-
-    reserved-memory {
-        #address-cells = <1>;
-        #size-cells = <1>;
-        ranges;
-
-        reserved: buffer@3c000000 {
-            no-map;
-            reg = <0x3c000000 0x4000000>;
-        };
     };
 };
 
