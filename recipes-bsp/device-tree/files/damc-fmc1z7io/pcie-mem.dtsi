@@ -1,5 +1,5 @@
 / {
-    // The upper 64GiB of our DDR3 is reserved exclusively for the PL
+    // The upper 64MiB of our DDR3 is reserved exclusively for the PL
     // It is needed e.g. for DMA buffers when PL is running as a XDMA/PCIe endpoint
     reserved-memory {
         #address-cells = <1>;
