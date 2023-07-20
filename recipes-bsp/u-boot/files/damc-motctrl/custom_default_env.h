@@ -11,7 +11,7 @@
 	"ramdisk_addr_r=0x02100000\0" \
 	"ramdisk_size_r=0x05D80000\0" \
 	"script_size_f=0x80000\0" \
-  "bootargs_common='earlycon clk_ignore_unused rw rootwait cpuidle.off=1 uio_pdrv_genirq.of_id=\"generic-uio\"'\0" \
+  "bootargs_common='earlycon clk_ignore_unused rw rootwait cpuidle.off=1 uio_pdrv_genirq.of_id=\"generic-uio\" video=DP-1'\0" \
   "sd_load_dtb_img=fatload mmc 0 ${fdt_addr_r} damc-motctrl-system.dtb && fatload mmc 0 ${kernel_addr_r} Image\0"                   \
   "emmc_load_dtb_img=fatload mmc 1 ${fdt_addr_r} damc-motctrl-system.dtb && fatload mmc 1 ${kernel_addr_r} Image\0"                 \
   "qspi_load_dtb_img=sf probe 0 0 0 && sf read ${fdt_addr_r} 0x00240000 ${fdt_size_r} && sf read ${kernel_addr_r} 0x00280000 ${kernel_size_r}\0" \

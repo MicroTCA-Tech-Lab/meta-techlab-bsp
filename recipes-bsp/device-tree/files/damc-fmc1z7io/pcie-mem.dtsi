@@ -1,0 +1,14 @@
+/ {
+    // The upper 64MiB of our DDR3 is reserved exclusively for the PL
+    // It is needed e.g. for DMA buffers when PL is running as a XDMA/PCIe endpoint
+    reserved-memory {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        ranges;
+
+        reserved: buffer@3c000000 {
+            no-map;
+            reg = <0x3c000000 0x4000000>;
+        };
+    };
+};

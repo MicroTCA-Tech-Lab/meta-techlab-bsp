@@ -15,12 +15,21 @@
             gpios = <&gpio 8 GPIO_ACTIVE_HIGH>;
         };
     };
+
+/* 50MHz reference crystal Y2 */
+ref50: ref50M
+    {
+        compatible = "fixed-clock";
+		#clock-cells = <0>;
+        clock-frequency = <50000000>;
+    };
 };
 
 // GEM1, GEM3: RGMII <--> 88E1512
 // GEM2: 1000BASE-X (no ext. PHY)
+// On Rev.A, there is no UID EEPROM for the MAC addresses,
+// they have to be set in U-Boot: https://redmine.msktools.desy.de/issues/12083#note-2
 &gem2 {
-    local-mac-address = [DE AD BE EF 01 01];
     is-internal-pcspma;
     phy-mode = "moca";
     phy-connection-type = "1000base-x";
@@ -31,7 +40,6 @@
 };
 
 &gem1 {
-    local-mac-address = [17 89 12 5f e4 01];
     phy-handle = <&phy0>;
 	phy0: phy@0 {
 		reg = <0x0>;
@@ -42,7 +50,6 @@
 };
 
 &gem3 {
-    local-mac-address = [17 89 12 5f e4 02];
     phy-handle = <&phy1>;
 	phy1: phy@0 {
 		reg = <0x0>;
@@ -79,29 +86,17 @@
     };
 };
 
+
 &i2c0 { // MIO6 / 7
-/*
-    eeprom_mac: eeprom@50 {
-        compatible = "atmel,24c02";
-        reg = <0x50>;
-        pagesize = <16>;
-    };
-*/
-// CPS (s. Z7IO)
-// s. CLK I2C in schematic
-/*
-    si570_mgt_lll: clock-generator@5d {
-        #clock-cells = <0>;
-        compatible = "silabs,si570";
-        temperature-stability = <50>;
-        reg = <0x55>;
-        factory-fout = <125000000>;
-        clock-frequency = <156250000>;
-        clock-output-names = "si570_mgt_lll";
-    };
-*/
-    /* Si Labs at 0x76, 0x77 are handled by a separate script */
+    /*
+        eeprom_mac: eeprom@50 {
+            compatible = "atmel,24c02";
+            reg = <0x50>;
+            pagesize = <16>;
+        };
+    */
 };
+
 /*
 &eeprom_mac  {
     #address-cells = <1>;
@@ -112,6 +107,7 @@
     };
 };
 */
+
 /*
 &dwc3_0 {
     status = "okay";
@@ -123,6 +119,69 @@
 };
 */
 
+/*
+
+		usb0@ff9d0000 {
+                        #address-cells = <0x02>;
+                        #size-cells = <0x02>;
+                        status = "okay";
+                        compatible = "xlnx,zynqmp-dwc3";
+                        reg = <0x00 0xff9d0000 0x00 0x100>;
+                        clock-names = "bus_clk\0ref_clk";
+                        power-domains = <0x0c 0x16>;
+                        ranges;
+                        nvmem-cells = <0x12>;
+                        nvmem-cell-names = "soc_revision";
+                        clocks = <0x03 0x20 0x03 0x22>;
+                        xlnx,tz-nonsecure = <0x01>;
+                        xlnx,usb-polarity = <0x01>;
+                        xlnx,usb-reset-io = <0x0a>;
+                        xlnx,usb-reset-mode = <0x02>;
+                        phandle = <0x6a>;
+
+                        dwc3@fe200000 {
+                                compatible = "snps,dwc3";
+                                status = "okay";
+                                reg = <0x00 0xfe200000 0x00 0x40000>;
+                                interrupt-parent = <0x04>;
+                                interrupt-names = "dwc_usb3\0otg\0hiber";
+                                interrupts = <0x00 0x41 0x04 0x00 0x45 0x04 0x00 0x4b 0x04>;
+                                #stream-id-cells = <0x01>;
+                                iommus = <0x0d 0x860>;
+                                snps,quirk-frame-length-adjustment = <0x20>;
+                                snps,refclk_fladj;
+                                snps,enable_guctl1_resume_quirk;
+                                snps,enable_guctl1_ipd_quirk;
+                                snps,xhci-stream-quirk;
+                                maximum-speed = "high-speed";
+                                snps,dis_u2_susphy_quirk;
+                                snps,dis_u3_susphy_quirk;
+                                phandle = <0x6b>;
+                        };
+                };
+
+*/
+
+
+&usb0 {
+	status = "okay";
+        /delete-property/ clocks;
+	/delete-property/ clock-names;
+	clocks = <0x3 0x21>;
+	clock-names = "bus_clk";
+};
+
+&dwc3_0 {
+        maximum-speed = "high-speed";
+        //snps,dis_u2_susphy_quirk;
+        //snps,dis_u3_susphy_quirk;
+        snps,usb3_lpm_capable;
+        phy-names = "usb2-phy";
+	status = "okay";
+        dr_mode = "host";
+};
+
+
 // copied from ZCU104
 // and https://www.zachpfeffer.com/single-post/Integrate-a-QSPI-using-PetaLinux-Tools-Part-2
 // going very slow
@@ -133,7 +192,7 @@
         #size-cells = <1>;
         reg = <0x0>;
         spi-tx-bus-width = <1>;
-        spi-rx-bus-width = <4>;
+        spi-rx-bus-width = <1>;
         spi-max-frequency = <50000000>;
         partitions {
             compatible = "fixed-partitions";

@@ -7,8 +7,8 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 SRC_URI = " file://fpgautil-init.sh "
 
 FILES_${PN}_append = " \
-    /etc/init.d/fpgautil-init.sh \
-    /etc/rcS.d/S50fpgautil-init \
+    ${sysconfdir}/init.d/fpgautil-init.sh \
+    ${sysconfdir}/rcS.d/S50fpgautil-init \
 "
 
 do_install() {
@@ -18,4 +18,7 @@ do_install() {
     ln -sf ../init.d/fpgautil-init.sh  ${D}${sysconfdir}/rcS.d/S50fpgautil-init
 }
 
-# FIXME: Depend on FPGA manager, hdf & devicetree; choose right FPGA variant at runtime
+# FIXME: Depend on FPGA manager & devicetree; choose right FPGA variant at runtime
+
+# for pl-variants
+DEPENDS = "external-hdf"

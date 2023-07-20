@@ -9,11 +9,17 @@ The handling of FPGA bitstreams and derivation of bin files & device trees is co
   * Deploys the `.xsa` to `${DEPLOYDIR}/Xilinx-${MACHINE}.xsa`.
 
 * `meta-techlab-bsp/recipes-bsp/hdf/external-hdf.bbappend`
-  * Also installs the `.xsa` for all variants (defined in `PL_VARIANTS` downstream) into subfolders in `/opt/xilinx/hw-design`.
-  * Creates text file `/opt/xilinx/hw-design/pl-variants` to list all available variants.
+  * Acquires and deploys `.xsa` files from `PL_VARIANTS_DIR` when fpga-manager is enabled,
+    or falls back to `HDF_PATH`, which must be an absolute path unless the file is provided
+    in a further overlay.
+  * Filters the `.xsa` files by a regular expression that can be defined as `PL_VARIANTS_FILTER`.
+  * Sets a default variant by sorting the XSA file names and taking the highest (last in the list),
+    optionally after filtering with another regexp if defined in `PL_VARIANTS_DEFAULT`.
+  * Creates text file `/opt/xilinx/hw-design/pl-variants` to list all available variants,
+    and `/opt/xilinx/hw-design/pl-variants-default` to show the default variant.
 
 * `meta-<application>/.../hdf/external-hdf.bbappend`
-  * Defines `HDF_PATH`, `PL_VARIANTS`, `PL_DEFAULT_VARIANT` and provides `.xsa` files.
+  * Defines `HDF_PATH`, `PL_VARIANTS_DIR`, `PL_VARIANTS_DEFAULT` and provides `.xsa` files.
 
 ## device-tree-from-bd
 
