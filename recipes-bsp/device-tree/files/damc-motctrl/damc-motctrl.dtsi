@@ -27,8 +27,9 @@ ref50: ref50M
 
 // GEM1, GEM3: RGMII <--> 88E1512
 // GEM2: 1000BASE-X (no ext. PHY)
+// On Rev.A, there is no UID EEPROM for the MAC addresses,
+// they have to be set in U-Boot: https://redmine.msktools.desy.de/issues/12083#note-2
 &gem2 {
-    local-mac-address = [DE AD BE EF 01 01];
     is-internal-pcspma;
     phy-mode = "moca";
     phy-connection-type = "1000base-x";
@@ -39,7 +40,6 @@ ref50: ref50M
 };
 
 &gem1 {
-    local-mac-address = [17 89 12 5f e4 01];
     phy-handle = <&phy0>;
 	phy0: phy@0 {
 		reg = <0x0>;
@@ -50,7 +50,6 @@ ref50: ref50M
 };
 
 &gem3 {
-    local-mac-address = [17 89 12 5f e4 02];
     phy-handle = <&phy1>;
 	phy1: phy@0 {
 		reg = <0x0>;
@@ -88,14 +87,14 @@ ref50: ref50M
 };
 
 
-&i2c0 { // MIO6 / 7 
+&i2c0 { // MIO6 / 7
     /*
         eeprom_mac: eeprom@50 {
             compatible = "atmel,24c02";
             reg = <0x50>;
             pagesize = <16>;
         };
-    */   
+    */
 };
 
 /*
