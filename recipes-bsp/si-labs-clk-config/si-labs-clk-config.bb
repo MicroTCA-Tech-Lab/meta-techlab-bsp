@@ -48,6 +48,8 @@ SRC_URI_append_damc-fmc1z7io-rev-b = " \
 
 RDEPENDS_${PN} = "python3 python3-smbus i2c-bus-locator"
 
+RDEPENDS_${PN}_damc-motctrl = "pl-reset"
+
 inherit setuptools3
 
 SLCC_BASE_DIR = "${TECHLAB_BOARD_DIR}/clock_config"
