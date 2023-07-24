@@ -1,3 +1,5 @@
+require hdf-info.inc
+
 DESCRIPTION = "Program FPGA as a part of the boot process"
 LICENSE = "CLOSED"
 PV = "1.0"
@@ -20,5 +22,6 @@ do_install() {
 
 # FIXME: Depend on FPGA manager & devicetree; choose right FPGA variant at runtime
 
-# for pl-variants
-DEPENDS = "external-hdf"
+PKG_${PN} = "${PN}${PKG_SUFFIX}"
+PKG_${PN}-lic = "${PN}${PKG_SUFFIX}-lic"
+PACKAGES = "${PN}"

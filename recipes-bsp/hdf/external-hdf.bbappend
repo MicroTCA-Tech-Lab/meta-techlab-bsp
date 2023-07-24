@@ -1,3 +1,5 @@
+require hdf-info.inc
+
 # Different PL bitstream variants to be included in the Yocto image can be
 # placed into PL_VARIANTS_DIR which must then be specified in the project-
 # specific external-hdf.bbapend or in conf/local.conf.
@@ -5,108 +7,101 @@
 HDF_NAME = "only-used-for-git"
 HDF_EXT = "xsa"
 
-do_install() {
-    if [ ${FPGA_MNGR_RECONFIG_ENABLE} = "1" ]; then
+python do_install() {
+    import shutil
+
+    hw_path = os.path.join(d.getVar('D'), 'opt', 'xilinx', 'hw-design')
+    os.makedirs(hw_path, exist_ok=True)
+
+    if d.getVar('FPGA_MNGR_RECONFIG_ENABLE') == '1':
         # Put design.xsa into subfolders for each variant
-        HW_DESIGNS=${D}/opt/xilinx/hw-design
-        install -d ${HW_DESIGNS}
-        for VARIANT in ${PL_VARIANTS_PATHS}; do
-            VARIANT_DIR=${HW_DESIGNS}/$(basename $VARIANT .${HDF_EXT})
-            echo installing ${VARIANT} to ${VARIANT_DIR}
-            install -d ${VARIANT_DIR}
-            install -m 0644 ${WORKDIR}/${VARIANT} ${VARIANT_DIR}/design.xsa
-        done
-        # Save list of variants for dependents (device-tree, bitstream-extraction)
-        echo -n "${PL_VARIANTS}"         > ${HW_DESIGNS}/pl-variants
-        echo -n "${PL_VARIANTS_DEFAULT}" > ${HW_DESIGNS}/pl-variants-default
-    else
-        install -d ${D}/opt/xilinx/hw-design
-        install -m 0644 ${WORKDIR}/${HDF_PATH} ${D}/opt/xilinx/hw-design/design.xsa
-    fi
+        for var_name, var_path, var_vers in zip(
+            d.getVar('PL_VARIANTS').split(),
+            d.getVar('PL_VARIANTS_PATHS').split(),
+            d.getVar('PL_VARIANTS_VERSIONS').split()):
+
+            var_dest = os.path.join(hw_path, var_name)
+            print(f'installing {var_path} to {var_dest}')
+            os.makedirs(var_dest, exist_ok=True)
+            shutil.copy(var_path, os.path.join(var_dest, 'design.xsa'))
+
+            if var_vers != 'None':
+                with open(os.path.join(var_dest, 'version'), 'w') as f:
+                    f.write(var_vers)
+
+    else:
+        shutil.copy(
+            os.path.join(d.getVar('WORKDIR'), d.getVar('HDF_PATH')),
+            os.path.join(hw_path, 'design.xsa'))
 }
 
 do_deploy() {
-    # One single .xsa has to be deployed for FSBL for some reason
+    # One single .xsa has to be deployed for FSBL to pick up the PS configuration
     install -d ${DEPLOYDIR}
     install -m 0644 ${WORKDIR}/${HDF_PATH} ${DEPLOYDIR}/Xilinx-${MACHINE}.${HDF_EXT}
 }
 
+# Can be set for unique HDF package names in package feed
+# (e.g. set PKG_SUFFIX to 'kaldera-ctrl', then the RPM package will be named 'external-hdf-kaldera-ctrl')
+PKG_SUFFIX ?= ""
+
 python () {
-    if d.getVar('FPGA_MNGR_RECONFIG_ENABLE', True) == '1':
-        hdflist = []
-        hdfpath = []
-
-        from pathlib import Path
-        pl_variants_dir = d.getVar('PL_VARIANTS_DIR')
-        if pl_variants_dir:
-            # Filter the results if the variable is defined.
-            pl_variants_filter = d.getVar('PL_VARIANTS_FILTER')
-            if pl_variants_filter:
-                import re
-                p = re.compile(pl_variants_filter)
-                is_filter_matched = lambda s: True if p.match(s) else False
-            else:
-                is_filter_matched = lambda s: True
-
-            print(f"Globbing for XSA files in {pl_variants_dir}:")
-            globbed = Path(pl_variants_dir).rglob("*." + d.getVar('HDF_EXT'))
-            for hdf in globbed:
-                rel_path = hdf.relative_to(pl_variants_dir)
-                if is_filter_matched(str(rel_path)):
-                    hdflist.append(hdf.stem)
-                    hdfpath.append(str(rel_path))
-                    print(f"  Using    {str(rel_path)}")
-                else:
-                    print(f"  Dropping {str(rel_path)}")
-        else:
-            # as a fallback we still support HDF_PATH without PL_VARIANTS_DIR
-            hdf = Path(d.getVar('HDF_PATH'))
-            hdflist.append(hdf.stem)
-            hdfpath.append(str(hdf))
-
-        d.setVar('PL_VARIANTS', ' '.join(hdflist))
-        d.setVar('PL_VARIANTS_PATHS', ' '.join(hdfpath))
-        d.setVar('SRC_URI', ' '.join([f" {d.getVar('HDF_BASE')}{i}" for i in hdfpath]))
-        if pl_variants_dir:
-            # bitbake must be told to search this directory so it can find the
-            # files in SRC_URI
-            d.setVar('FILESEXTRAPATHS', f"{pl_variants_dir}:{d.getVar('PL_VARIANTS_DIR')}")
-
-        print("Determining the default PL variant:")
-        pl_variants_default = d.getVar('PL_VARIANTS_DEFAULT')
-        hdfdefault = sorted(hdflist)[-1]
-        if pl_variants_dir and pl_variants_default:
-            # filter the list of variants for the specified regex
-            import re
-            p = re.compile(pl_variants_default)
-            hdflist_for_default = [x for x in hdflist if p.match(x)]
-            if hdflist_for_default:
-                print(f"  Filtered variants to select from: {hdflist_for_default}")
-                hdfdefault = sorted(hdflist_for_default)[-1]
-            else:
-                print(f"  The filtered list is empty.")
-        d.setVar('PL_VARIANTS_DEFAULT', hdfdefault)
-
-        # do_deploy needs HDF_PATH
-        if pl_variants_dir:
-            d.setVar('HDF_PATH', [x for x in hdfpath if hdfdefault in x][0])
-
-        print(f"Found these XSA files in {pl_variants_dir} or HDF_PATH:")
-        print(f"  PL_VARIANTS_PATHS = {d.getVar('PL_VARIANTS_PATHS')}")
-        print(f"  PL_VARIANTS = {d.getVar('PL_VARIANTS')}")
-        print(f"  PL_VARIANTS_DEFAULT = {d.getVar('PL_VARIANTS_DEFAULT')}")
-        print(f"  SRC_URI = {d.getVar('SRC_URI')}")
-
-        d.setVar('PL_VARIANTS_FILES',
-            '/opt/xilinx/hw-design/pl-variants ' +
-            '/opt/xilinx/hw-design/pl-variants-default ' +
-            ' '.join(
-                '/opt/xilinx/hw-design/' + v + '/design.xsa'
-                for v in hdflist
-            )
-        )
-    else:
+    if d.getVar('FPGA_MNGR_RECONFIG_ENABLE', True) != '1':
         d.setVar('PL_VARIANTS_FILES', '')
+        return
+
+    from pathlib import Path
+    import re
+    re_ver = re.compile(r'(.+)_(\d+\.\d+\.\d+)-(\d+)-g([0-9a-f]+)')
+
+    # Get HDF basename and version info from filename
+    # e.g. 'zu19eg_1.2.3-4-g10ba99f8.xsa'
+    def hdf_verinfo(hdf_fullname):
+        m = re_ver.match(hdf_fullname)
+        # ('1.2.3', '4', '10ba99f8')
+        return  m.groups()[1:] if m else None
+
+    hdflist, hdfpath, hdfvers = d.getVar('PL_VARIANTS').split(), [], []
+
+    src_dir = d.getVar('PL_VARIANTS_DIR')
+
+    for hdf in hdflist:
+        hdf_path = next(Path(src_dir).rglob(f'{hdf}*.' + d.getVar('HDF_EXT')))
+        rel_path = hdf_path.relative_to(src_dir)
+        hdf_vers = hdf_verinfo(hdf_path.stem)
+
+        hdfpath.append(str(rel_path))
+        hdfvers.append(f'{hdf_vers[0]}-git0+{hdf_vers[2]}' if hdf_vers else None)
+        print(f'  Using {hdf} @ {hdfpath[-1]}, vers {hdfvers[-1]}')
+
+    # hdflist now contains the variants names; hdfpath contains full paths of the .xsa files
+    d.setVar('PL_VARIANTS_PATHS', ' '.join(hdfpath))
+    d.setVar('PL_VARIANTS_VERSIONS', ' '.join(v or 'None' for v in hdfvers))
+    d.setVar('SRC_URI', ' '.join([f" {d.getVar('HDF_BASE')}{i}" for i in hdfpath]))
+
+    print("Determining the default PL variant:")
+    pl_variants_default = d.getVar('PL_VARIANTS_DEFAULT')
+    d.setVar('HDF_PATH', hdfpath[hdflist.index(pl_variants_default)])
+
+    # Split into subpackages
+    pn, ps = d.getVar('PN', True), d.getVar('PKG_SUFFIX', True)
+    subpkgs = []
+    for hdf, hdf_vers in zip(hdflist, hdfvers):
+        subpkg = pn + '-' + hdf
+        subpkgs.append(subpkg)
+        var_dest = os.path.join('/opt/xilinx/hw-design', hdf)
+        d.setVar('FILES_' + subpkg, ' '.join((
+            os.path.join(var_dest, 'design.xsa'),
+            (os.path.join(var_dest, 'version') if hdf_vers else '')
+        )))
+        d.setVar('PKG_' + subpkg, pn + ps + '-' + hdf)
+        if hdf_vers:
+            d.setVar('PKGV_' + subpkg, hdf_vers)
+    d.setVar('SUBPKGS', ' '.join(subpkgs))
 }
+
+PKG_${PN} = "${PN}${PKG_SUFFIX}"
+PKG_${PN}-lic = "${PN}${PKG_SUFFIX}-lic"
+PACKAGES = "${SUBPKGS} ${PN}"
 
 FILES_${PN} += "${PL_VARIANTS_FILES}"
