@@ -15,8 +15,6 @@ The handling of FPGA bitstreams and derivation of bin files & device trees is co
   * Filters the `.xsa` files by a regular expression that can be defined as `PL_VARIANTS_FILTER`.
   * Sets a default variant by sorting the XSA file names and taking the highest (last in the list),
     optionally after filtering with another regexp if defined in `PL_VARIANTS_DEFAULT`.
-  * Creates text file `/opt/xilinx/hw-design/pl-variants` to list all available variants,
-    and `/opt/xilinx/hw-design/pl-variants-default` to show the default variant.
 
 * `meta-<application>/.../hdf/external-hdf.bbappend`
   * Defines `HDF_PATH`, `PL_VARIANTS_DIR`, `PL_VARIANTS_DEFAULT` and provides `.xsa` files.
@@ -40,7 +38,7 @@ The handling of FPGA bitstreams and derivation of bin files & device trees is co
   * Extracts `.bit` file from `.xsa` file.
 
 * `meta-techlab-utils/recipes-bsp/device-tree-from-bd/bitstream-extraction_git.bbappend`
-  * Also extracts bitfiles from all variants declared in `/opt/xilinx/hw-design/pl-variants`.
+  * Also extracts bitfiles from all variants declared in `PL_VARIANTS`.
 
 ## fpga-manager-util
 
