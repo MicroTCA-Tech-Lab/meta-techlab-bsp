@@ -1,5 +1,3 @@
-require hdf-info.inc
-
 DESCRIPTION = "Program FPGA as a part of the boot process"
 LICENSE = "CLOSED"
 PV = "1.0"
@@ -22,6 +20,7 @@ do_install() {
 
 # FIXME: Depend on FPGA manager & devicetree; choose right FPGA variant at runtime
 
-PKG_${PN} = "${PN}${PKG_SUFFIX}"
-PKG_${PN}-lic = "${PN}${PKG_SUFFIX}-lic"
+PL_PKG_SUFFIX ?= ""
+PKG_${PN} = "${PN}${PL_PKG_SUFFIX}"
+PKG_${PN}-lic = "${PN}${PL_PKG_SUFFIX}-lic"
 PACKAGES = "${PN}"
