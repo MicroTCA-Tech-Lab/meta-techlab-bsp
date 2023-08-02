@@ -1,5 +1,3 @@
-require hdf-info.inc
-
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 
 SRC_URI_append = " \
@@ -80,6 +78,7 @@ do_deploy_append_damc-fmc1z7io-rev-a() {
     ln -sf damc-fmc1z7io-rev-a-system.dtb ${DEPLOYDIR}/damc-fmc1z7io-system.dtb
 }
 
-PKG_${PN} = "${PN}${PKG_SUFFIX}"
-PKG_${PN}-lic = "${PN}${PKG_SUFFIX}-lic"
+PL_PKG_SUFFIX ?= ""
+PKG_${PN} = "${PN}${PL_PKG_SUFFIX}"
+PKG_${PN}-lic = "${PN}${PL_PKG_SUFFIX}-lic"
 PACKAGES = "${PN}"
