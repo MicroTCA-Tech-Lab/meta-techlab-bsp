@@ -10,6 +10,10 @@ SRC_URI = " \
     file://Makefile \
     file://adv7511.h \
     file://adv7511_drv.c \
+    file://adv7511_audio.c \
+    file://adv7511_cec.c \
+    file://adv7511_debugfs.c \
+    file://adv7533.c \
     file://COPYING \
 "
 

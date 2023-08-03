@@ -1,30 +1,49 @@
+From ea0f577b9d68abac8700a402d7629fd9150b36a7 Mon Sep 17 00:00:00 2001
+From: Patrick Huesmann <patrick.huesmann@desy.de>
+Date: Thu, 3 Aug 2023 11:01:29 +0200
+Subject: [PATCH] ADI HDMI output
+
+---
+ include/linux/fpga/adi-axi-common.h | 75 +++++++++++++++++++++++++++--
+ 1 file changed, 70 insertions(+), 5 deletions(-)
+
 diff --git a/include/linux/fpga/adi-axi-common.h b/include/linux/fpga/adi-axi-common.h
-index 7fc95d5c95bb..80dbcee5bb75 100644
+index 141ac3f251e6..c7421b89ec97 100644
 --- a/include/linux/fpga/adi-axi-common.h
 +++ b/include/linux/fpga/adi-axi-common.h
-@@ -12,8 +12,73 @@
+@@ -11,13 +11,78 @@
+ #ifndef ADI_AXI_COMMON_H_
  #define ADI_AXI_COMMON_H_
  
- #define	ADI_AXI_REG_VERSION			0x0000
-+#define ADI_AXI_REG_ID				0x0004
-+#define ADI_AXI_REG_SCRATCH			0x0008
-+#define ADI_AXI_REG_CONFIG			0x000c
-+
-+#define ADI_AXI_REG_FPGA_INFO			0x001C
-+#define ADI_AXI_REG_FPGA_VOLTAGE		0x0140
+-#define ADI_AXI_REG_VERSION			0x0000
++#define ADI_AXI_REG_VERSION 0x0000
++#define ADI_AXI_REG_ID 0x0004
++#define ADI_AXI_REG_SCRATCH 0x0008
++#define ADI_AXI_REG_CONFIG 0x000c
  
- #define ADI_AXI_PCORE_VER(major, minor, patch)	\
+-#define ADI_AXI_PCORE_VER(major, minor, patch)	\
++#define ADI_AXI_REG_FPGA_INFO 0x001C
++#define ADI_AXI_REG_FPGA_VOLTAGE 0x0140
++
++#define ADI_AXI_PCORE_VER(major, minor, patch)                                 \
  	(((major) << 16) | ((minor) << 8) | (patch))
  
-+#define ADI_AXI_PCORE_VER_MAJOR(version)	(((version) >> 16) & 0xff)
-+#define ADI_AXI_PCORE_VER_MINOR(version)	(((version) >> 8) & 0xff)
-+#define ADI_AXI_PCORE_VER_PATCH(version)	((version) & 0xff)
+-#define ADI_AXI_PCORE_VER_MAJOR(version)	(((version) >> 16) & 0xff)
+-#define ADI_AXI_PCORE_VER_MINOR(version)	(((version) >> 8) & 0xff)
+-#define ADI_AXI_PCORE_VER_PATCH(version)	((version) & 0xff)
++#define ADI_AXI_PCORE_VER_MAJOR(version) (((version) >> 16) & 0xff)
++#define ADI_AXI_PCORE_VER_MINOR(version) (((version) >> 8) & 0xff)
++#define ADI_AXI_PCORE_VER_PATCH(version) ((version)&0xff)
 +
-+#define ADI_AXI_INFO_FPGA_TECH(info)		(((info) >> 24) & 0xff)
-+#define ADI_AXI_INFO_FPGA_FAMILY(info)		(((info) >> 16) & 0xff)
-+#define ADI_AXI_INFO_FPGA_SPEED_GRADE(info)	(((info) >> 8) & 0xff)
-+#define ADI_AXI_INFO_FPGA_DEV_PACKAGE(info)	((info) & 0xff)
-+#define ADI_AXI_INFO_FPGA_VOLTAGE(val)		((val) & 0xffff)
++#define ADI_AXI_PCORE_VER_MAJOR(version) (((version) >> 16) & 0xff)
++#define ADI_AXI_PCORE_VER_MINOR(version) (((version) >> 8) & 0xff)
++#define ADI_AXI_PCORE_VER_PATCH(version) ((version)&0xff)
++
++#define ADI_AXI_INFO_FPGA_TECH(info) (((info) >> 24) & 0xff)
++#define ADI_AXI_INFO_FPGA_FAMILY(info) (((info) >> 16) & 0xff)
++#define ADI_AXI_INFO_FPGA_SPEED_GRADE(info) (((info) >> 8) & 0xff)
++#define ADI_AXI_INFO_FPGA_DEV_PACKAGE(info) ((info)&0xff)
++#define ADI_AXI_INFO_FPGA_VOLTAGE(val) ((val)&0xffff)
 +
 +enum adi_axi_fgpa_technology {
 +	ADI_AXI_FPGA_TECH_UNKNOWN = 0,
@@ -42,16 +61,16 @@ index 7fc95d5c95bb..80dbcee5bb75 100644
 +};
 +
 +enum adi_axi_fpga_speed_grade {
-+	ADI_AXI_FPGA_SPEED_UNKNOWN	= 0,
-+	ADI_AXI_FPGA_SPEED_1	= 10,
-+	ADI_AXI_FPGA_SPEED_1L	= 11,
-+	ADI_AXI_FPGA_SPEED_1H	= 12,
-+	ADI_AXI_FPGA_SPEED_1HV	= 13,
-+	ADI_AXI_FPGA_SPEED_1LV	= 14,
-+	ADI_AXI_FPGA_SPEED_2	= 20,
-+	ADI_AXI_FPGA_SPEED_2L	= 21,
-+	ADI_AXI_FPGA_SPEED_2LV	= 22,
-+	ADI_AXI_FPGA_SPEED_3	= 30,
++	ADI_AXI_FPGA_SPEED_UNKNOWN = 0,
++	ADI_AXI_FPGA_SPEED_1 = 10,
++	ADI_AXI_FPGA_SPEED_1L = 11,
++	ADI_AXI_FPGA_SPEED_1H = 12,
++	ADI_AXI_FPGA_SPEED_1HV = 13,
++	ADI_AXI_FPGA_SPEED_1LV = 14,
++	ADI_AXI_FPGA_SPEED_2 = 20,
++	ADI_AXI_FPGA_SPEED_2L = 21,
++	ADI_AXI_FPGA_SPEED_2LV = 22,
++	ADI_AXI_FPGA_SPEED_3 = 30,
 +};
 +
 +enum adi_axi_fpga_dev_pack {
@@ -74,5 +93,8 @@ index 7fc95d5c95bb..80dbcee5bb75 100644
 +	ADI_AXI_FPGA_DEV_BA,
 +	ADI_AXI_FPGA_DEV_FA,
 +};
-+
+ 
  #endif /* ADI_AXI_COMMON_H_ */
+-- 
+2.41.0
+

@@ -16,11 +16,12 @@
 #include <linux/of_dma.h>
 #include <linux/of_graph.h>
 #include <linux/clk.h>
+#include <linux/delay.h>
 
-#include <drm/drmP.h>
 #include <drm/drm.h>
 #include <drm/drm_atomic_helper.h>
 #include <drm/drm_crtc_helper.h>
+#include <drm/drm_drv.h>
 #include <drm/drm_fb_helper.h>
 #include <drm/drm_gem_cma_helper.h>
 #include <drm/drm_gem_framebuffer_helper.h>
@@ -85,17 +86,16 @@ static int axi_hdmi_init(struct drm_driver *ddrv, struct device *dev)
 
 	drm_mode_config_reset(ddev);
 
-	ret = drm_fbdev_generic_setup(ddev, 32);
-	if (ret) {
-		DRM_ERROR("failed to initialize drm fbdev: %d\n", ret);
-		goto err_crtc;
-	}
-
 	/* init kms poll for handling hpd */
 	drm_kms_helper_poll_init(ddev);
 
-	return drm_dev_register(ddev, 0);
+	ret = drm_dev_register(ddev, 0);
+	if (ret)
+		goto err_crtc;
 
+	drm_fbdev_generic_setup(ddev, 32);
+
+	return 0;
 err_crtc:
 	drm_mode_config_cleanup(ddev);
 
@@ -132,7 +132,7 @@ static struct drm_driver axi_hdmi_driver = {
 	.gem_prime_vunmap	= drm_gem_cma_prime_vunmap,
 	.gem_prime_mmap		= drm_gem_cma_prime_mmap,
 	.dumb_create		= drm_gem_cma_dumb_create,
-	.gem_free_object	= drm_gem_cma_free_object,
+	.gem_free_object_unlocked = drm_gem_cma_free_object,
 	.gem_vm_ops		= &drm_gem_cma_vm_ops,
 	.dumb_create		= drm_gem_cma_dumb_create,
 	.fops			= &axi_hdmi_driver_fops,
@@ -161,7 +161,7 @@ static int axi_hdmi_platform_probe(struct platform_device *pdev)
 	struct resource *res;
 	int ret;
 
-	// added by MTCA TechLab (should be fixed by module dependecy)
+	// FIXME: should be fixed by module dependecy
 	printk(KERN_DEBUG "adi-axi-hdmi-mod: Wait for clk_axi_clkgen and adv7511 to be loaded\n");
 	msleep(500);
 	printk(KERN_DEBUG "adi-axi-hdmi-mod: Continue loading adi_axi_hdmi module\n");
