@@ -48,7 +48,7 @@ SRC_URI_append_damc-fmc1z7io-rev-b = " \
 
 RDEPENDS_${PN} = "python3 python3-smbus i2c-bus-locator"
 
-RDEPENDS_${PN}_damc-motctrl = "pl-reset"
+RDEPENDS_${PN}_append_damc-motctrl = " pl-reset"
 
 inherit setuptools3
 
