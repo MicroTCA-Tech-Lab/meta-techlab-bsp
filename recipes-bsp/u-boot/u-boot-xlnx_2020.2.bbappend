@@ -22,6 +22,11 @@ SRC_URI_append_damc-motctrl = " \
 	file://0001-Revert-arm64-zynqmp-Remove-all-Xilinx-private-comman.patch \
 	file://0002-xilinx-enable-debug-for-MAC-addr-read.patch \
 	file://0003-Add-custom-default-env-settings.patch \
+	file://0004-Add-support-for-MMC-mailbox.patch \
+	file://0005-Disable-PHY-init.patch \
+	file://0006-Fix-moca-phy-mode.patch \
+	file://0007-Ignore-secondary-NICs.patch \
+	file://enable-i2c-gpio.cfg \
 "
 
 do_configure_append() {

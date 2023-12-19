@@ -1,0 +1,31 @@
+From 1402cfcf2a085287bd45391a873fefa62e224de4 Mon Sep 17 00:00:00 2001
+From: Patrick Huesmann <patrick.huesmann@desy.de>
+Date: Tue, 19 Dec 2023 12:18:59 +0100
+Subject: [PATCH 4/4] Ignore secondary NICs
+
+---
+ drivers/net/zynq_gem.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/net/zynq_gem.c b/drivers/net/zynq_gem.c
+index d859a6381a..bf80835a8c 100644
+--- a/drivers/net/zynq_gem.c
++++ b/drivers/net/zynq_gem.c
+@@ -665,6 +665,14 @@ static int zynq_gem_probe(struct udevice *dev)
+ 	struct zynq_gem_priv *priv = dev_get_priv(dev);
+ 	int ret;
+ 
++	// DAMC-MOTCTRL: Ignore all eth interfaces other than the primary one,
++	// connected to the backplane with "internal-pcspma" flag set.
++	// (When using CONFIG_ZYNQ_GEM_I2C_MAC_OFFSET it will write the MAC
++	//  to *all* NICs it can find, so we make it find only the primary one)
++	if (!dev_read_bool(dev, "is-internal-pcspma")) {
++		return -ENODEV;
++	}		
++
+ 	/* Align rxbuffers to ARCH_DMA_MINALIGN */
+ 	priv->rxbuffers = memalign(ARCH_DMA_MINALIGN, RX_BUF * PKTSIZE_ALIGN);
+ 	if (!priv->rxbuffers)
+-- 
+2.43.0
+
