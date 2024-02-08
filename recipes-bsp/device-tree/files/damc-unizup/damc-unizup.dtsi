@@ -1,0 +1,161 @@
+#include "dt-bindings/gpio/gpio.h"
+#include "dt-bindings/phy/phy.h"
+
+/ {
+    /* We do have UID EEPROM on this board, but use the STAMP UID for the ethernet MAC address */
+    chosen {
+        xlnx,eeprom = &mmcmailbox;
+    };
+
+    gpio-leds {
+        compatible = "gpio-leds";
+
+        // PS_MIO24 -> FPLED.LED1
+        led-ps1 {
+            label = "LED_PS1";
+            linux,default-trigger = "heartbeat";
+            gpios = <&gpio 24 GPIO_ACTIVE_HIGH>;
+        };
+
+        // PS_MIO6 -> FPLED.LED2
+        led-ps2 {
+            label = "LED_PS2";
+            linux,default-trigger = "mmc1";
+            gpios = <&gpio 6 GPIO_ACTIVE_HIGH>;
+        };
+    };
+};
+
+&i2c1 {
+    mmcmailbox: mmcmailbox@2a {
+        compatible = "desy,mmcmailbox";
+        reg = <0x2a>;
+        #address-cells = <0x02>;
+        #size-cells = <0x02>;
+    };
+};
+
+&gem3 {
+    phy-handle = <&phy0>;
+
+    phy0: phy@0 {
+        // Marvell 88E1512
+        //   compatible string is not needed
+        reg = <0>;
+
+// PS_MIO8 -> PHY_RESn_BANK501
+// Somehow this does not work? (Or does it have to do w/ the PHY power supply bug?)
+//        reset-gpios = <&gpio 8 GPIO_ACTIVE_LOW>;
+//        reset-assert-us = <1000>;
+//        reset-deassert-us = <2000>;
+
+        device_type = "ethernet-phy";
+        marvell,reg-init =
+            // Set Fiber Auto-Negotiation Advertisement Register to 1000BASE-X Full-Duplex *only*
+            // Needed for kernel 5.10
+            <1 4 0x0000 0x0020>;
+    };
+};
+
+// SD interface on MIO bank 0 is directly connected to on-board eMMC
+&sdhci0 {
+    non-removable;
+    disable-wp;
+    bus-width = <8>;
+    xlnx,mio-bank = <0>;
+};
+
+// SD interface on MIO bank 1 is connected to Front Panel SD card via Ultra High Speed translator (1.8V capable)
+// (PI4ULS3V4857GEAEX); Supported bus speeds: SDR12, SDR25, SDR50, DDR50, SDR104
+// we have the SEL pin to switch to UHS3.0 1.8V operation
+// we have the "SD3.0" Autodir setting (without the DIR pins)
+// we have CD, but not WP
+&sdhci1 {
+    disable-wp;
+    bus-width = <4>; // in Vivado the settings is "Data Transfer 8bit", but probably only for the pin mux??
+    xlnx,mio-bank = <1>;
+
+    sd-uhs-sdr12;
+    sd-uhs-sdr25;
+    sd-uhs-sdr50;
+    sd-uhs-ddr50;
+    sd-uhs-sdr104;
+};
+
+&gpio {
+    // PS_MIO8 --> PHY reset
+    // TODO: Check if it can be done from PHY driver
+    phy_reset_n {
+        gpio-hog;
+        output-high;
+        gpios = <8 GPIO_ACTIVE_HIGH>;
+    };
+
+    // PS_MIO25 --> I2C0_OE
+    i2c0oe {
+        gpio-hog;
+        output-high;
+        gpios = <25 GPIO_ACTIVE_HIGH>;
+    };
+
+    // PS_MIO12 --> CPU_FRONTEND.USBC_PD_RESET
+    // TODO: Check if we can toggle this on boot
+    usbc_pd_reset {
+        gpio-hog;
+        output-low;
+        gpios = <12 GPIO_ACTIVE_HIGH>;
+    };
+};
+
+&dwc3_0 {
+    dr_mode = "host";
+    snps,usb3_lpm_capable;
+    phy-names = "usb3-phy";
+    // TODO: check PHY parameter... (Ref clk is 100 MHz!)
+    phys = <&lane0 PHY_TYPE_USB3 0 0 26000000>;
+    maximum-speed = "super-speed";
+};
+// TODO: check display port node?
+
+// TODO: SATA? (We have lane2 and lane3 as SATA lanes)
+// Can we have multiple SATA devices? (TRM says SATA block has 2 ports)
+
+// copied from ZCU104
+// and https://www.zachpfeffer.com/single-post/Integrate-a-QSPI-using-PetaLinux-Tools-Part-2
+// going very slow
+&qspi {
+    flash@0 {
+        compatible = "jedec,spi-nor";
+        #address-cells = <1>;
+        #size-cells = <1>;
+        reg = <0x0>;
+        spi-tx-bus-width = <1>;
+        spi-rx-bus-width = <1>;
+        spi-max-frequency = <50000000>;
+        partitions {
+            compatible = "fixed-partitions";
+            #address-cells = <1>;
+            #size-cells = <1>;
+            bootbin@0 {
+                /* 2M for FSBL + Uboot */
+                reg = <0x00000000 0x00200000>;
+            };
+            env@200000 {
+                /* 256k for Uboot env */
+                reg = <0x00200000 0x00040000>;
+            };
+            dts@240000 {
+                /* 256k for device tree */
+                reg = <0x00240000 0x00040000>;
+            };
+            image@280000 {
+                /* 32M for kernel */
+                reg = <0x00280000 0x02000000>;
+            };
+            recovery@2280000 {
+                /* 93.5M remaining for recovery-rootfs */
+                reg = <0x02280000 0x05D80000>;
+            };
+        };
+    };
+};

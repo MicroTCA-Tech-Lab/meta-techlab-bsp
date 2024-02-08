@@ -34,6 +34,8 @@
         reg = <0>;
         device_type = "ethernet-phy";
         marvell,reg-init =
+            // This is apparently to fix a HW issue
+            // (polarity swapped on S_IN/S_OUT terminals)
             <254 15 0x3fff 0>,
             // Set Fiber Auto-Negotiation Advertisement Register to 1000BASE-X Full-Duplex *only*
             // Needed for kernel 5.10
