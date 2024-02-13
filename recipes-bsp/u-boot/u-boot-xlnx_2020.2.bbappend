@@ -34,6 +34,7 @@ SRC_URI_append_damc-unizup = " \
 	file://0002-xilinx-enable-debug-for-MAC-addr-read.patch \
 	file://0003-Add-custom-default-env-settings.patch \
 	file://0004-Add-support-for-MMC-mailbox.patch \
+	file://enable-i2c-cdns.cfg \
 "
 
 do_configure_append() {
