@@ -1,0 +1,13 @@
+diff --git a/drivers/net/zynq_gem.c b/drivers/net/zynq_gem.c
+index f79238a156..6e8dde9acb 100644
+--- a/drivers/net/zynq_gem.c
++++ b/drivers/net/zynq_gem.c
+@@ -7,7 +7,7 @@
+  * Based on Xilinx gmac driver:
+  * (C) Copyright 2011 Xilinx
+  */
+-
++#define DEBUG 1
+ #include <clk.h>
+ #include <common.h>
+ #include <cpu_func.h>

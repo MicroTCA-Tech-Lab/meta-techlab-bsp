@@ -1,0 +1,27 @@
+From 6f9c51a127afcb1baca419be45eb154a0f61f15c Mon Sep 17 00:00:00 2001
+From: Patrick Huesmann <patrick.huesmann@desy.de>
+Date: Wed, 14 Feb 2024 18:49:57 +0100
+Subject: [PATCH] Use PHY Fiber interface
+
+---
+ drivers/net/phy/marvell.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/net/phy/marvell.c b/drivers/net/phy/marvell.c
+index 5b1fed7bee..893328397d 100644
+--- a/drivers/net/phy/marvell.c
++++ b/drivers/net/phy/marvell.c
+@@ -486,6 +486,10 @@ static int m88e1518_config(struct phy_device *phydev)
+ 	genphy_config_aneg(phydev);
+ 	genphy_restart_aneg(phydev);
+ 
++        // Activate Fiber page
++        // so that autoneg/link status is read from Fiber page instead of Copper page
++	phy_write(phydev, MDIO_DEVAD_NONE, MII_MARVELL_PHY_PAGE, 1);
++
+ 	return 0;
+ }
+ 
+-- 
+2.43.0
+
