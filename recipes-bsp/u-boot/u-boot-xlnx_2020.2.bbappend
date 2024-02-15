@@ -7,6 +7,7 @@ SRC_URI_append = " \
 	file://eth-backplane/0001-Use-PHY-Fiber-interface.patch \
 	file://0002-xilinx-enable-debug-for-MAC-addr-read.patch \
 	file://0003-Add-custom-default-env-settings.patch \
+	file://tftp-port.patch \
 "
 
 SRC_URI_append_damc-fmc2zup = " \
