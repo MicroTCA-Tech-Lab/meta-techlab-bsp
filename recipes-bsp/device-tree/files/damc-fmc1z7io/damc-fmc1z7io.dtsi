@@ -62,8 +62,15 @@
 &gem0 {
     phy-handle = <&phy0>;
 	phy0: phy@0 {
-		reg = <0x0>;
-        device_type = "ethernet-phy";
+            reg = <0x0>;
+            device_type = "ethernet-phy";
+            marvell,reg-init =
+                // Set Fiber Auto-Negotiation Advertisement Register to 1000BASE-X Full-Duplex *only*
+                <1 4 0x0000 0x0020>,
+                // Set PHY Mode to "RGMII --> 1000BASE-X"
+                <18 20 0x0000 0x0002>,
+                // Reset PHY
+                <18 20 0x7fff 0x8000>;
 	};
 };
 
