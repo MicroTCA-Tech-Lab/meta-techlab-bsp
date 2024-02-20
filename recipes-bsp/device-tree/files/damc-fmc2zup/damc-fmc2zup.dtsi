@@ -38,17 +38,28 @@
             // (polarity swapped on S_IN/S_OUT terminals)
             <254 15 0x3fff 0>,
             // Set Fiber Auto-Negotiation Advertisement Register to 1000BASE-X Full-Duplex *only*
-            // Needed for kernel 5.10
-            <1 4 0x0000 0x0020>;
+            <1 4 0x0000 0x0020>,
+            // Set PHY Mode to "RGMII --> 1000BASE-X"
+            <18 20 0x0000 0x0002>,
+            // Reset PHY
+            <18 20 0x7fff 0x8000>;
     };
 };
 
 &sdhci0 {
     // WP pin is not available on microSD, not connected on the board
     disable-wp;
-
     // the HW does not support SD 3.0
     no-1-8-v;
+    bus-width = <4>;
+    xlnx,mio-bank = <0>;
+};
+
+&sdhci1 {
+    non-removable;
+    disable-wp;
+    bus-width = <8>;
+    xlnx,mio-bank = <1>;
 };
 
 &gpio {
