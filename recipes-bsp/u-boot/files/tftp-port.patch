@@ -1,0 +1,13 @@
+diff --git a/net/tftp.c b/net/tftp.c
+index 1e3c18ae69..7d2fef2f62 100644
+--- a/net/tftp.c
++++ b/net/tftp.c
+@@ -18,6 +18,8 @@
+ #include <flash.h>
+ #endif
+ 
++#define CONFIG_TFTP_PORT 1 // This doesn't get propagated from config for some reason
++
+ DECLARE_GLOBAL_DATA_PTR;
+ 
+ /* Well known TFTP port # */

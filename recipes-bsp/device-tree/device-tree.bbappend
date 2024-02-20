@@ -23,6 +23,7 @@ DEPENDS_append = "${@'device-tree-from-bd' if d.getVar('DT_FROM_BD_ENABLE') == '
 YAML_DT_BOARD_FLAGS_damc-fmc1z7io ?= "{BOARD ${MACHINE}}"
 YAML_DT_BOARD_FLAGS_damc-fmc2zup  ?= "{BOARD damc-fmc2zup}"
 YAML_DT_BOARD_FLAGS_damc-motctrl  ?= "{BOARD damc-motctrl}"
+YAML_DT_BOARD_FLAGS_damc-unizup   ?= "{BOARD damc-unizup}"
 
 do_configure_prepend() {
     # Inject board DTSI file into DTG tool

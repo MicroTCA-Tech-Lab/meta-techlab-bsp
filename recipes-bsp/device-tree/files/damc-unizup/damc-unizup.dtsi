@@ -1,39 +1,37 @@
-
 #include "dt-bindings/gpio/gpio.h"
 #include "dt-bindings/phy/phy.h"
 
 / {
+    /* We do have UID EEPROM on this board, but use the STAMP UID for the ethernet MAC address */
     chosen {
-        xlnx,eeprom = &eeprom_mac;
+        xlnx,eeprom = &mmcmailbox;
     };
 
     gpio-leds {
         compatible = "gpio-leds";
 
-        // MIO17 and MIO23 are PS LEDs
+        // PS_MIO24 -> FPLED.LED1
         led-ps1 {
             label = "LED_PS1";
             linux,default-trigger = "heartbeat";
-            gpios = <&gpio 17 GPIO_ACTIVE_HIGH>;
+            gpios = <&gpio 24 GPIO_ACTIVE_HIGH>;
         };
 
+        // PS_MIO6 -> FPLED.LED2
         led-ps2 {
             label = "LED_PS2";
-            linux,default-trigger = "mmc0";
-            gpios = <&gpio 23 GPIO_ACTIVE_HIGH>;
+            linux,default-trigger = "mmc1";
+            gpios = <&gpio 6 GPIO_ACTIVE_HIGH>;
         };
     };
+};
 
-    psgtr_refclk0: oscillator1 {
-        compatible = "fixed-clock";
-        #clock-cells = <0>;
-        clock-frequency  = <27000000>;
-    };
-
-    psgtr_refclk2: oscillator2 {
-        compatible = "fixed-clock";
-        #clock-cells = <0>;
-        clock-frequency  = <26000000>;
+&i2c1 {
+    mmcmailbox: mmcmailbox@2a {
+        compatible = "desy,mmcmailbox";
+        reg = <0x2a>;
+        #address-cells = <0x02>;
+        #size-cells = <0x02>;
     };
 };
 
@@ -41,14 +39,18 @@
     phy-handle = <&phy0>;
 
     phy0: phy@0 {
-        // Marvel 88E1512
+        // Marvell 88E1512
         //   compatible string is not needed
         reg = <0>;
+
+// PS_MIO8 -> PHY_RESn_BANK501
+// Somehow this does not work? (Or does it have to do w/ the PHY power supply bug?)
+//        reset-gpios = <&gpio 8 GPIO_ACTIVE_LOW>;
+//        reset-assert-us = <1000>;
+//        reset-deassert-us = <2000>;
+
         device_type = "ethernet-phy";
         marvell,reg-init =
-            // This is apparently to fix a HW issue
-            // (polarity swapped on S_IN/S_OUT terminals)
-            <254 15 0x3fff 0>,
             // Set Fiber Auto-Negotiation Advertisement Register to 1000BASE-X Full-Duplex *only*
             <1 4 0x0000 0x0020>,
             // Set PHY Mode to "RGMII --> 1000BASE-X"
@@ -58,29 +60,49 @@
     };
 };
 
+// SD interface on MIO bank 0 is directly connected to on-board eMMC
 &sdhci0 {
-    // WP pin is not available on microSD, not connected on the board
-    disable-wp;
-    // the HW does not support SD 3.0
-    no-1-8-v;
-    bus-width = <4>;
-    xlnx,mio-bank = <0>;
-};
-
-&sdhci1 {
     non-removable;
     disable-wp;
     bus-width = <8>;
+    xlnx,mio-bank = <0>;
+};
+
+// SD interface on MIO bank 1 is connected to Front Panel SD card via Ultra High Speed translator (1.8V capable)
+// (PI4ULS3V4857GEAEX); Supported bus speeds: SDR12, SDR25, SDR50, DDR50, SDR104
+// we have the SEL pin to switch to UHS3.0 1.8V operation
+// we have the "SD3.0" Autodir setting (without the DIR pins)
+// we have CD, but not WP
+&sdhci1 {
+    disable-wp;
+    bus-width = <4>; // in Vivado the settings is "Data Transfer 8bit", but probably only for the pin mux??
     xlnx,mio-bank = <1>;
+
+    sd-uhs-sdr12;
+    sd-uhs-sdr25;
+    sd-uhs-sdr50;
+    sd-uhs-ddr50;
+    sd-uhs-sdr104;
 };
 
 &gpio {
+    // PS_MIO8 --> PHY reset
+    // TODO: Check if it can be done from PHY driver
+    phy_reset_n {
+        gpio-hog;
+        output-high;
+        gpios = <8 GPIO_ACTIVE_HIGH>;
+    };
+
+    // PS_MIO25 --> I2C0_OE
     i2c0oe {
         gpio-hog;
         output-high;
-        gpios = <20 GPIO_ACTIVE_HIGH>;
+        gpios = <25 GPIO_ACTIVE_HIGH>;
     };
 
+    // PS_MIO12 --> CPU_FRONTEND.USBC_PD_RESET
+    // TODO: Check if we can toggle this on boot
     usbc_pd_reset {
         gpio-hog;
         output-low;
@@ -88,56 +110,18 @@
     };
 };
 
-&i2c0 {
-    eeprom_mac: eeprom@50 {
-        compatible = "atmel,24c02";
-        reg = <0x50>;
-        pagesize = <16>;
-    };
-
-    si570_mgt_lll: clock-generator@5d {
-        #clock-cells = <0>;
-        compatible = "silabs,si570";
-        temperature-stability = <50>;
-        reg = <0x55>;
-        factory-fout = <125000000>;
-        clock-frequency = <156250000>;
-        clock-output-names = "si570_mgt_lll";
-    };
-
-    /* Si Labs at 0x76, 0x77 are handled by a separate script */
-};
-
-&eeprom_mac  {
-    #address-cells = <1>;
-    #size-cells = <1>;
-
-    eth_mac: eth_mac@fa {
-        reg = <0xfa 0x6>;
-    };
-};
-
-&psgtr {
-	clocks = <&psgtr_refclk0>, <&psgtr_refclk2>;
-	clock-names = "ref0", "ref2";
-};
-
 &dwc3_0 {
     dr_mode = "host";
     snps,usb3_lpm_capable;
     phy-names = "usb3-phy";
-
-    /* arg0..3: lane number, PHY type, PHY instance, refclock number */
-    phys = <&psgtr 2 PHY_TYPE_USB3 0 2>; 
+    // TODO: check PHY parameter... (Ref clk is 100 MHz!)
+    phys = <&lane0 PHY_TYPE_USB3 0 0 26000000>;
     maximum-speed = "super-speed";
 };
+// TODO: check display port node?
 
-/*
-&zynqmp_dpsub {
-	phy-names = "dp-phy0", "dp-phy1";
-	phys = <&psgtr 3 PHY_TYPE_DP 0 0>, <&psgtr 2 PHY_TYPE_DP 1 0>;
-};
-*/
+// TODO: SATA? (We have lane2 and lane3 as SATA lanes)
+// Can we have multiple SATA devices? (TRM says SATA block has 2 ports)
 
 // copied from ZCU104
 // and https://www.zachpfeffer.com/single-post/Integrate-a-QSPI-using-PetaLinux-Tools-Part-2
@@ -148,7 +132,6 @@
         #address-cells = <1>;
         #size-cells = <1>;
         reg = <0x0>;
-        // Kernel 5.10 cannot access the flash in quad mode for some reason
         spi-tx-bus-width = <1>;
         spi-rx-bus-width = <1>;
         spi-max-frequency = <50000000>;
@@ -179,4 +162,3 @@
         };
     };
 };
-

@@ -1,0 +1,34 @@
+From 494b0802ed4d1b3c89c83752f840f4df49d25286 Mon Sep 17 00:00:00 2001
+From: Patrick Huesmann <patrick.huesmann@desy.de>
+Date: Tue, 19 Dec 2023 12:18:14 +0100
+Subject: [PATCH 3/4] Fix "moca" phy-mode
+
+---
+ drivers/net/zynq_gem.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/zynq_gem.c b/drivers/net/zynq_gem.c
+index 725f461845..d859a6381a 100644
+--- a/drivers/net/zynq_gem.c
++++ b/drivers/net/zynq_gem.c
+@@ -776,8 +776,15 @@ static int zynq_gem_ofdata_to_platdata(struct udevice *dev)
+ 	}
+ 
+ 	phy_mode = dev_read_prop(dev, "phy-mode", NULL);
+-	if (phy_mode)
+-		pdata->phy_interface = phy_get_interface_by_name(phy_mode);
++
++	// DAMC-MOTCTRL: Prevent u-boot from choking on "moca" phy-mode
++	if (phy_mode) {
++		if (!strcmp(phy_mode, "moca")) {
++			pdata->phy_interface = PHY_INTERFACE_MODE_SGMII;
++		} else {
++			pdata->phy_interface = phy_get_interface_by_name(phy_mode);
++		}
++	}
+ 	if (pdata->phy_interface == -1) {
+ 		debug("%s: Invalid PHY interface '%s'\n", __func__, phy_mode);
+ 		return -EINVAL;
+-- 
+2.43.0
+

@@ -1,0 +1,32 @@
+From 2ae5346c4ef9a32ec183f0f4ff5ea74a8e270ef8 Mon Sep 17 00:00:00 2001
+From: Patrick Huesmann <patrick.huesmann@desy.de>
+Date: Tue, 19 Dec 2023 11:19:32 +0100
+Subject: [PATCH 2/4] Disable PHY init
+
+---
+ drivers/net/zynq_gem.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/zynq_gem.c b/drivers/net/zynq_gem.c
+index f79238a156..725f461845 100644
+--- a/drivers/net/zynq_gem.c
++++ b/drivers/net/zynq_gem.c
+@@ -704,9 +704,12 @@ static int zynq_gem_probe(struct udevice *dev)
+ 	if (ret)
+ 		goto err2;
+ 
+-	ret = zynq_phy_init(dev);
+-	if (ret)
+-		goto err2;
++	// On the DAMC-MOTCTRL, eth0 is directly wired to the backplane, without a PHY in between
++	// Initialize the GEM interface only, w/o trying to initialize a non-existing PHY
++	// 
++	// ret = zynq_phy_init(dev);
++	// if (ret)
++	//	goto err2;
+ 
+ 	return ret;
+ 
+-- 
+2.43.0
+

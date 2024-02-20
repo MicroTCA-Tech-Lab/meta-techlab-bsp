@@ -1,4 +1,4 @@
-COMPATIBLE_MACHINE = "damc-fmc1z7io|damc-fmc2zup"
+COMPATIBLE_MACHINE = "damc-fmc1z7io|damc-fmc2zup|damc-unizup"
 
 DESCRIPTION = "Clock monitor"
 LICENSE = "CLOSED"

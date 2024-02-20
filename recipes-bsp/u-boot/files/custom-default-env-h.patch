@@ -20,6 +20,19 @@ index 5891d26385..22871a1cfe 100644
  /* Initial environment variables */
  #ifndef CONFIG_EXTRA_ENV_SETTINGS
  #define CONFIG_EXTRA_ENV_SETTINGS \
+diff --git a/include/configs/zynq-common.h b/include/configs/zynq-common.h
+index d0614d8da4..0e4cd7c4e2 100644
+--- a/include/configs/zynq-common.h
++++ b/include/configs/zynq-common.h
+@@ -195,6 +195,8 @@
+ #include <config_distro_bootcmd.h>
+ #endif /* CONFIG_SPL_BUILD */
+ 
++#include "custom_default_env.h"
++
+ /* Default environment */
+ #ifndef CONFIG_EXTRA_ENV_SETTINGS
+ #define CONFIG_EXTRA_ENV_SETTINGS	\
 -- 
 2.25.1
 
