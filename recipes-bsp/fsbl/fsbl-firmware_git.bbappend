@@ -1,4 +1,5 @@
-XSCTH_APP_COMPILER_FLAGS_append = " -DFSBL_DEBUG"
+# Enable SD3.0 UHS mode for Unizup
+XSCTH_APP_COMPILER_FLAGS_append_damc-unizup = " -DUHS_MODE_ENABLE"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 

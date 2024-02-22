@@ -114,8 +114,7 @@
     dr_mode = "host";
     snps,usb3_lpm_capable;
     phy-names = "usb3-phy";
-    // TODO: check PHY parameter... (Ref clk is 100 MHz!)
-    phys = <&lane0 PHY_TYPE_USB3 0 0 26000000>;
+    phys = <&lane0 PHY_TYPE_USB3 0 0 100000000>;
     maximum-speed = "super-speed";
 };
 // TODO: check display port node?
