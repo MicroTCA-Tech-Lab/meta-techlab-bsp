@@ -24,6 +24,32 @@
             gpios = <&gpio 6 GPIO_ACTIVE_HIGH>;
         };
     };
+    
+    // USB Refclk 100MHz
+    psgtr_refclk_lane0: oscillator1 {
+        compatible = "fixed-clock";
+        #clock-cells = <0>;
+        clock-frequency  = <100000000>;
+    };
+
+    // DP Refclk 108MHz
+    psgtr_refclk_lane1: oscillator2 {
+        compatible = "fixed-clock";
+        #clock-cells = <0>;
+        clock-frequency  = <108000000>;
+    };
+
+    // SATA Refclk 150MHz
+    psgtr_refclk_lane2: oscillator3 {
+        compatible = "fixed-clock";
+        #clock-cells = <0>;
+        clock-frequency  = <150000000>;
+    };
+};
+
+&psgtr {
+    clocks = <&psgtr_refclk_lane0>, <&psgtr_refclk_lane1>, <&psgtr_refclk_lane2>;
+    clock-names = "ref0", "ref1", "ref2";
 };
 
 &i2c1 {
@@ -114,7 +140,8 @@
     dr_mode = "host";
     snps,usb3_lpm_capable;
     phy-names = "usb3-phy";
-    phys = <&lane0 PHY_TYPE_USB3 0 0 100000000>;
+    /* arg0..3: lane number, PHY type, PHY instance, refclock number ("refN" in psgtr/clock-names)*/
+    phys = <&psgtr 0 PHY_TYPE_USB3 0 0>; 
     maximum-speed = "super-speed";
 };
 // TODO: check display port node?
