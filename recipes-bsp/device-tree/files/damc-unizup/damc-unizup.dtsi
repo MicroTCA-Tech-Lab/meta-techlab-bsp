@@ -146,8 +146,20 @@
 };
 // TODO: check display port node?
 
-// TODO: SATA? (We have lane2 and lane3 as SATA lanes)
-// Can we have multiple SATA devices? (TRM says SATA block has 2 ports)
+&sata {
+    // We have one SATA controller with two ports.
+    // Create "sub-nodes" so the kernel recognizes both of them.
+
+    sata0: sata-port@0 {
+        reg = <0>;
+        phys = <&psgtr 2 PHY_TYPE_SATA 0 2>; 
+    };
+
+    sata1: sata-port@1 {
+        reg = <1>;
+        phys = <&psgtr 3 PHY_TYPE_SATA 1 2>; 
+    };
+};
 
 // copied from ZCU104
 // and https://www.zachpfeffer.com/single-post/Integrate-a-QSPI-using-PetaLinux-Tools-Part-2
