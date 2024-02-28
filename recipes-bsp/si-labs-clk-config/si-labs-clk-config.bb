@@ -1,4 +1,4 @@
-COMPATIBLE_MACHINE = "damc-fmc1z7io|damc-fmc2zup|damc-motctrl"
+COMPATIBLE_MACHINE = "damc-fmc1z7io|damc-fmc2zup|damc-motctrl|damc-unizup"
 
 DESCRIPTION = "Configuration tool for Si Labs chips on I2C bus"
 LICENSE = "CLOSED"
@@ -22,6 +22,10 @@ SRC_URI = " \
 
 SRC_URI_append_damc-motctrl = " \
     file://example_config/motctrl_0x76_mainpll.txt \
+"
+
+SRC_URI_append_damc-unizup = " \
+    file://example_config/unizup_0x76_mainpll.txt \
 "
 
 SRC_URI_append_damc-fmc2zup = " \
@@ -59,6 +63,11 @@ FILES_${PN}_append_damc-motctrl = " \
     ${SLCC_BASE_DIR}/motctrl_0x76_mainpll.txt \
 "
 
+FILES_${PN}_append_damc-unizup = " \
+    ${SLCC_BASE_DIR}/0x76_mainpll.txt \
+    ${SLCC_BASE_DIR}/unizup_0x76_mainpll.txt \
+"
+
 FILES_${PN}_append_damc-fmc2zup = " \
     ${SLCC_BASE_DIR}/0x75_zone3.txt \
     ${SLCC_BASE_DIR}/0x76_ps.txt \
@@ -93,10 +102,19 @@ FILES_${PN}_append_damc-fmc1z7io-rev-b = " \
 do_install_append_damc-motctrl() {
     SLCC_INSTALL_DIR=${D}${base_prefix}${SLCC_BASE_DIR}
     install -d ${SLCC_INSTALL_DIR}
-    install -m 0644 ${S}/example_config/motctrl_0x76_mainpll.txt    ${SLCC_INSTALL_DIR}
+    install -m 0644 ${S}/example_config/motctrl_0x76_mainpll.txt ${SLCC_INSTALL_DIR}
 
     # configs are symbolic links so that other applications can overwrite them
     ln -s motctrl_0x76_mainpll.txt    ${SLCC_INSTALL_DIR}/0x76_mainpll.txt
+}
+
+do_install_append_damc-unizup() {
+    SLCC_INSTALL_DIR=${D}${base_prefix}${SLCC_BASE_DIR}
+    install -d ${SLCC_INSTALL_DIR}
+    install -m 0644 ${S}/example_config/unizup_0x76_mainpll.txt ${SLCC_INSTALL_DIR}
+
+    # configs are symbolic links so that other applications can overwrite them
+    ln -s unizup_0x76_mainpll.txt    ${SLCC_INSTALL_DIR}/0x76_mainpll.txt
 }
 
 do_install_append_damc-fmc2zup() {
