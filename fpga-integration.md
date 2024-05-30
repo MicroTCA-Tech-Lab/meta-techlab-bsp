@@ -34,6 +34,7 @@ These have to be defined at a central place visible to all other recipes; e.g. `
   * Acquires and deploys `.xsa` files when `PL_VARIANTS_DIR` is set,
     or falls back to `HDF_PATH`, which must be an absolute path unless the file is provided
     in a further overlay.
+    When `HDF_PATH` contains an asterisk (\*), the glob result with the latest modification time is selected.
   * Sets a default variant as defined in `PL_VARIANTS_DEFAULT`. If `PL_VARIANTS_DEFAULT` is not set, it uses the first
     `PL_VARIANT` as default one.
   * Picks up version suffixes in filenames such as `zu11eg-1.2.3.xsa` or `zu11eg-1.2.3-45-g12345678.xsa`.
